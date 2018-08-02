@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFrameworks>net462;net47;net471;net472;netstandard2.0</TargetFrameworks>
+      <Description>Collection of useful Extensions gathered along the way.</Description>
+      <Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
+      <PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
+      <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+      <Authors>EmL Solutions</Authors>
+      <Company>EmL Solutions</Company>
+      <PackageTags>EmL Extensions</PackageTags>
+      <NoWarn>1701;1702;1705;CS1591</NoWarn>
+      <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
+      <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+</Project>
