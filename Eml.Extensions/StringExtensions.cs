@@ -98,7 +98,7 @@ namespace Eml.Extensions
         {
             var result = Regex.Replace(word, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
 
-            return result.UppercaseFirst();
+            return result.ToProperCase(' ');
         }
     }
 }
