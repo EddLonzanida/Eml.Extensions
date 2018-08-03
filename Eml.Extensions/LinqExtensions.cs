@@ -43,7 +43,5 @@ namespace Eml.Extensions
                 .Skip(resultsToSkip)
                 .Take(pageSize);
         }
-
-
     }
 }
