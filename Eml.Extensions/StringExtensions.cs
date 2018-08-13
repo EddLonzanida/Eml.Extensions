@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Eml.Extensions
@@ -96,9 +97,13 @@ namespace Eml.Extensions
         /// <returns></returns>
         public static string ToSpaceDelimitedWords(this string word)
         {
-            var result = Regex.Replace(word, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
+            var result = Regex.Replace(word, @"\s\s+", " ");
 
-            return result.ToProperCase(' ');
+            result = Regex.Replace(result, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ")
+               .ToProperCase(' ')
+               .Trim();
+
+            return result;
         }
     }
 }

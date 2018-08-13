@@ -35,6 +35,7 @@ namespace Eml.Extensions.Tests.Unit
         [InlineData("oneTwothree", "One Twothree")]
         [InlineData("One Two Three", "One Two Three")]
         [InlineData("one Two three", "One Two Three")]
+        [InlineData(" one  Two       three ", "One Two Three")]
         public void ToSpaceDelimitedWords_ShouldDelimitedWords(string sut, string expectedResult)
         {
             sut.ToSpaceDelimitedWords().ShouldBe(expectedResult);
