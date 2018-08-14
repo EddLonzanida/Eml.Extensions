@@ -105,5 +105,25 @@ namespace Eml.Extensions
 
             return result;
         }
+
+        public static void TrimStringProperties(this Type objType)
+        {
+            var props = objType.GetProperties();
+
+            foreach (var p in props)
+            {
+                var propertyType = p.PropertyType.Name;
+
+                if (propertyType != "String" || !p.CanWrite) continue;
+
+                var oValue = p.GetValue(objType);
+
+                if (oValue == null) continue;
+
+                var propertyValue = oValue.ToString().Trim();
+
+                p.SetValue(objType, propertyValue);
+            }
+        }
     }
 }
