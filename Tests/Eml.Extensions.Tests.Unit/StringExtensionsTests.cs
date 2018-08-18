@@ -40,5 +40,19 @@ namespace Eml.Extensions.Tests.Unit
         {
             sut.ToSpaceDelimitedWords().ShouldBe(expectedResult);
         }
+
+        [Fact]
+        public void TrimStringProperties_ShouldTrimProperties()
+        {
+            const string LAST_NAME = "Last Name";
+            const string FIRST_NAME = "First Name";
+
+            var sut =new TestClass {FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} "};
+
+            sut.TrimStringProperties();
+
+            sut.FirstName.ShouldBe(FIRST_NAME);
+            sut.LastName.ShouldBe(LAST_NAME);
+        }
     }
 }

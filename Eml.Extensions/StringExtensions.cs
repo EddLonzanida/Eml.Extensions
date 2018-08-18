@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
+
+#if NETCORE
+using System.Reflection;
+#endif
 
 namespace Eml.Extensions
 {
@@ -74,7 +77,7 @@ namespace Eml.Extensions
             return new string(a);
         }
 
-        public static string ToProperCase(this string s, char delimeter)
+        public static string ToProperCase(this string s, char delimeter = '.')
         {
             var result = s;
             var aWords = new List<string>();
@@ -106,8 +109,10 @@ namespace Eml.Extensions
             return result;
         }
 
-        public static void TrimStringProperties(this Type objType)
+        public static void TrimStringProperties<T>(this T objInstance)
+            where T : class
         {
+            var objType = objInstance.GetType();
             var props = objType.GetProperties();
 
             foreach (var p in props)
@@ -116,13 +121,13 @@ namespace Eml.Extensions
 
                 if (propertyType != "String" || !p.CanWrite) continue;
 
-                var oValue = p.GetValue(objType);
+                var oValue = p.GetValue(objInstance);
 
                 if (oValue == null) continue;
 
                 var propertyValue = oValue.ToString().Trim();
 
-                p.SetValue(objType, propertyValue);
+                p.SetValue(objInstance, propertyValue);
             }
         }
     }

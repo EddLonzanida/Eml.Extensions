@@ -15,4 +15,24 @@
       <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'net47' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net472'">
+      <PropertyGroup>
+        <DefineConstants>NETFULL</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <Choose>
+        <When Condition="'$(TargetFramework)' == 'netcoreapp2.0'  or '$(TargetFramework)' == 'netcoreapp2.1' or '$(TargetFramework)' == 'netstandard2.0'">
+          <PropertyGroup>
+            <DefineConstants>NETCORE</DefineConstants>
+          </PropertyGroup>
+          <ItemGroup>
+          </ItemGroup>
+        </When>
+      </Choose>
+    </Otherwise>
+  </Choose> 
 </Project>
