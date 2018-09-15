@@ -43,5 +43,50 @@ namespace Eml.Extensions
                 .Skip(resultsToSkip)
                 .Take(pageSize);
         }
+
+        /// <summary>
+        /// Convert Lists into MVC-ish dropdown list. Call the ToMvcSelectList extenstion when using HTML.DropDownListFor.
+        /// </summary>
+        public static IEnumerable<SelectListItem> ToSelectListItems<T, TName, TValue>(this List<T> items,
+            Func<T, TValue> valueSelector, Func<T, TName> nameSelector)
+            where T : class
+        {
+            var tmpList = items
+                .OrderBy(nameSelector)
+                .ToList();
+
+            var selectListItems = tmpList.Select(item => new SelectListItem
+            {
+                Text = nameSelector(item).ToString(),
+                Value = valueSelector(item).ToString()   //valueSelector
+            }).ToList();
+
+            selectListItems.Insert(0, new SelectListItem { Text = "- Select - ", Value = "" });
+
+            return selectListItems;
+        }
+
+        /// <summary>
+        /// Get the value in a List. Throws an Exception when multiple records found.
+        /// </summary>
+        public static TValue GetValueAsync<T, TValue>(this List<T> items,
+            Func<T, bool> idWhereClause,
+            Func<T, TValue> valueSelector)
+            where T : class
+        {
+            var results = items
+                .Where(idWhereClause)
+                .Select(valueSelector)
+                .ToList();
+
+            if (results.Count > 1)
+            {
+                throw new Exception($"{results.Count:G} records found. Expected 1.");
+            }
+
+            var firstOrDefault = results.FirstOrDefault();
+
+            return firstOrDefault;
+        }
     }
 }
