@@ -59,6 +59,10 @@ namespace Eml.Extensions.Tests.Unit
         [InlineData("company", "companies")]
         [InlineData("COMPANY", "COMPANIES")]
         [InlineData("COMPANy", "COMPANies")]
+        [InlineData("Title", "Titles")]
+        [InlineData("TITLE", "TITLES")]
+        [InlineData("Tab", "Tabs")]
+        [InlineData("TAB", "TABS")]
         public void Pluralize_ShouldPluralize(string sut, string expectedResult)
         {
             sut.Pluralize().ShouldBe(expectedResult);

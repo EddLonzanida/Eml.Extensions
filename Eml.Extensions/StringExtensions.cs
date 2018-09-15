@@ -131,23 +131,77 @@ namespace Eml.Extensions
             }
         }
 
-        public static string Pluralize(this string word)
+        public static string Pluralize(this string text)
         {
-            var s = word.Trim();
+            var newWord = text.Trim();
+            var word = text.Trim();
 
-            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+            if (string.IsNullOrWhiteSpace(word)) return string.Empty;
 
-            var a = s.ToCharArray();
+            var a = word.ToCharArray();
             var lastLetter = a[a.Length - 1];
             var isLower = char.IsLower(lastLetter);
-            var noLastLetter = s.Substring(0, s.Length - 1);
+            string append = "";
 
-            if (lastLetter == 'Y' || lastLetter == 'y')
+            var exceptions = new Dictionary<string, string> {
+                { "man", "men" },
+                { "woman", "women" },
+                { "child", "children" },
+                { "tooth", "teeth" },
+                { "foot", "feet" },
+                { "mouse", "mice" },
+                { "belief", "beliefs" } };
+
+            if (exceptions.ContainsKey(word.ToLowerInvariant()))
             {
-                return isLower ? $"{noLastLetter}ies" : $"{noLastLetter}IES";
+                return exceptions[word.ToLowerInvariant()];
             }
 
-            return isLower ? $"{noLastLetter}s" : $"{noLastLetter}S";
+            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("ay", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("ey", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("iy", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("oy", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("uy", StringComparison.OrdinalIgnoreCase))
+            {
+                append = isLower ? "ies" : "IES";
+
+                return newWord.Substring(0, newWord.Length - 1) + append;
+            }
+
+            if (word.EndsWith("us", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase) 
+                || word.EndsWith("x", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase))
+            {
+                append = isLower ? "es" : "ES";
+
+                return newWord + append;
+            }
+
+            if (word.EndsWith("s", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return newWord;
+            }
+
+            if (word.EndsWith("f", StringComparison.InvariantCultureIgnoreCase) && word.Length > 1)
+            {
+                append = isLower ? "ves" : "VES";
+
+                return newWord.Substring(0, newWord.Length - 1) + append;
+            }
+
+            if (word.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase) && word.Length > 2)
+            {
+                append = isLower ? "ves" : "VES";
+
+                return newWord.Substring(0, newWord.Length - 2) + append;
+            }
+
+            append = isLower ? "s" : "S";
+
+            return newWord + append;
         }
     }
 }
