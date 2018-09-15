@@ -77,18 +77,18 @@ namespace Eml.Extensions
             return new string(a);
         }
 
-        public static string ToProperCase(this string s, char delimeter = '.')
+        public static string ToProperCase(this string s, char delimiter = '.')
         {
             var result = s;
             var aWords = new List<string>();
 
-            aWords.AddRange(s.Split(delimeter));
+            aWords.AddRange(s.Split(delimiter));
 
             if (aWords.Count < 1) return result;
             if (aWords.Count == 1) return s.UppercaseFirst();
 
             aWords = aWords.ConvertAll(UppercaseFirst);
-            result = string.Join(delimeter.ToString(), aWords.ToArray());
+            result = string.Join(delimiter.ToString(), aWords.ToArray());
 
             return result;
         }
@@ -129,6 +129,25 @@ namespace Eml.Extensions
 
                 p.SetValue(objInstance, propertyValue);
             }
+        }
+
+        public static string Pluralize(this string word)
+        {
+            var s = word.Trim();
+
+            if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+
+            var a = s.ToCharArray();
+            var lastLetter = a[a.Length - 1];
+            var isLower = char.IsLower(lastLetter);
+            var noLastLetter = s.Substring(0, s.Length - 1);
+
+            if (lastLetter == 'Y' || lastLetter == 'y')
+            {
+                return isLower ? $"{noLastLetter}ies" : $"{noLastLetter}IES";
+            }
+
+            return isLower ? $"{noLastLetter}s" : $"{noLastLetter}S";
         }
     }
 }

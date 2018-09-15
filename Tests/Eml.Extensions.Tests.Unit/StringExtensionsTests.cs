@@ -47,12 +47,21 @@ namespace Eml.Extensions.Tests.Unit
             const string LAST_NAME = "Last Name";
             const string FIRST_NAME = "First Name";
 
-            var sut =new TestClass {FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} "};
+            var sut = new TestClass { FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} " };
 
             sut.TrimStringProperties();
 
             sut.FirstName.ShouldBe(FIRST_NAME);
             sut.LastName.ShouldBe(LAST_NAME);
+        }
+
+        [Theory]
+        [InlineData("company", "companies")]
+        [InlineData("COMPANY", "COMPANIES")]
+        [InlineData("COMPANy", "COMPANies")]
+        public void Pluralize_ShouldPluralize(string sut, string expectedResult)
+        {
+            sut.Pluralize().ShouldBe(expectedResult);
         }
     }
 }
