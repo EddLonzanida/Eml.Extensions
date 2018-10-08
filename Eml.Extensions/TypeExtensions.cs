@@ -104,7 +104,9 @@ namespace Eml.Extensions
 
         public static List<Assembly> GetReferencingAssemblies(IReadOnlyCollection<string> startsWithAssemblyPattern)
         {
-            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
+            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern)
+                .Build()
+                .ConvertAll(r => r.ToLower());
             var referencedAssemblies = withPattern
                 .Select(p => GetReferencingAssemblies(r => r.Name.ToLower().StartsWith(p)))
                 .SelectMany(assembly => assembly.Select(r => r));
