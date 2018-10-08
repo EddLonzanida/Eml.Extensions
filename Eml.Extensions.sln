@@ -19,9 +19,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eml.Extensions.Tests.Integr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eml.Extensions.Tests.Integration.NetCore", "Tests\Eml.Extensions.Tests.Integration.NetCore\Eml.Extensions.Tests.Integration.NetCore.csproj", "{58224342-8C31-4103-94D8-010905AB9170}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly1", "Tests\TestArtifactsNetFull\Assembly1\Assembly1.csproj", "{3F71CA7D-C767-4D2E-BB22-D10CD7642296}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly1NetFull", "Tests\TestArtifactsNetFull\Assembly1\Assembly1NetFull.csproj", "{3F71CA7D-C767-4D2E-BB22-D10CD7642296}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly2", "Tests\TestArtifactsNetFull\Assembly2\Assembly2.csproj", "{220B7CDE-DEB8-4376-842E-A6814E13CA97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly2NetFull", "Tests\TestArtifactsNetFull\Assembly2\Assembly2NetFull.csproj", "{220B7CDE-DEB8-4376-842E-A6814E13CA97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

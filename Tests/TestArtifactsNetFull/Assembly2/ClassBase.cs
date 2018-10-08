@@ -1,4 +1,4 @@
-﻿namespace Assembly2
+﻿namespace Assembly2NetFull
 {
     public abstract class ClassBase : IClassBase
     {

@@ -102,6 +102,16 @@ namespace Eml.Extensions
                 .ToList();
         }
 
+        public static List<Assembly> GetReferencingAssemblies(IReadOnlyCollection<string> startsWithAssemblyPattern)
+        {
+            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
+            var referencedAssemblies = withPattern
+                .Select(p => GetReferencingAssemblies(r => r.Name.ToLower().StartsWith(p)))
+                .SelectMany(assembly => assembly.Select(r => r));
+
+            return referencedAssemblies.ToList();
+        }
+
         public static List<Assembly> GetReferencingAssemblies()
         {
             var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();

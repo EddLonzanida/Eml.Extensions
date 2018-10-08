@@ -1,4 +1,4 @@
-﻿namespace Assembly1
+﻿namespace Assembly1NetFull
 {
     public interface IClassBase
     {
