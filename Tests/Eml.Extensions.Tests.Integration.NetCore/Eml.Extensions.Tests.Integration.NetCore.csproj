@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Eml.Extensions\Eml.Extensions.csproj" />
+    <ProjectReference Include="..\TestArtifactsNetCore\Assembly1\Assembly1.csproj" />
+    <ProjectReference Include="..\TestArtifactsNetCore\Assembly2\Assembly2.csproj" />
   </ItemGroup>
 
 </Project>

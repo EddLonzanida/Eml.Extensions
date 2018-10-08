@@ -1,4 +1,4 @@
-﻿namespace Eml.Extensions.Tests.Unit
+﻿namespace Assembly1
 {
     public class TestClass
     {

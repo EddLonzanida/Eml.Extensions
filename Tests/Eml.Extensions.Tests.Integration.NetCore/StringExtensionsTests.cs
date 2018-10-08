@@ -1,7 +1,8 @@
-﻿using Shouldly;
+﻿using Assembly1;
+using Shouldly;
 using Xunit;
 
-namespace Eml.Extensions.Tests.Unit
+namespace Eml.Extensions.Tests.Integration.NetCore
 {
     public class StringExtensionsTests
     {
