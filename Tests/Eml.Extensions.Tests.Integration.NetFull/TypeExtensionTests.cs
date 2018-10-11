@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.Composition;
+using System.Linq;
 using Eml.Extensions.Tests.Integration.NetFull.BaseClasses;
 using Shouldly;
 using Xunit;
@@ -47,6 +48,29 @@ namespace Eml.Extensions.Tests.Integration.NetFull
             var sut = classes.SelectMany(r => r.GetPropertyNames());
 
             sut.Count().ShouldBe(18);
+        }
+
+        [Fact]
+        public void ShouldGetClassAttributes()
+        {
+            var classes = assemblies.SelectMany(r => r.GetClasses());
+
+            var sut = classes.Select(r => r.GetClassAttribute<ExportAttribute>())
+                .Where(r => r != null);
+
+            sut.Count().ShouldBe(4);
+        }
+
+        [Fact]
+        public void ShouldGetPropertyAttributes()
+        {
+            var classes = assemblies.SelectMany(r => r.GetClasses());
+
+            var sut = classes.SelectMany(r => r.GetProperties2())
+                .Select(r => r.GetPropertyAttribute<ImportAttribute>())
+                .Where(r => r != null);
+
+            sut.Count().ShouldBe(8);
         }
     }
 }

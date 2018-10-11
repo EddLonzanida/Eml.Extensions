@@ -154,9 +154,21 @@ namespace Eml.Extensions
             return signature;
         }
 
-        public static List<string> GetPropertyNames(this Type type)
+        /// <summary>
+        /// Uses BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static List<PropertyInfo> GetProperties2(this Type type)
         {
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+
+            return properties.ToList();
+        }
+
+        public static List<string> GetPropertyNames(this Type type)
+        {
+            var properties = type.GetProperties2();
 
             return properties
                 .Select(property => property.Name)
@@ -165,7 +177,7 @@ namespace Eml.Extensions
 
         public static List<string> GetPropertyNames(this Type type, Func<PropertyInfo, bool> selector)
         {
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+            var properties = type.GetProperties2();
 
             return properties
                 .Where(selector)
@@ -191,9 +203,9 @@ namespace Eml.Extensions
             return assembly.GetTypes(nameSpace, type => !type.IsAbstract);
         }
 
-        public static List<Type> GetClasses(this Assembly assembly)
+        public static List<Type> GetClasses(this Assembly assembly, bool includeAbstract = false)
         {
-            return assembly.GetTypes(type => !type.IsAbstract);
+            return includeAbstract ? assembly.GetTypes(type => true) : assembly.GetTypes(type => !type.IsAbstract);
         }
 
         public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector)
@@ -250,9 +262,16 @@ namespace Eml.Extensions
                 .ToList();
         }
 
-        public static T GetAttribute<T>(this PropertyInfo prop) where T : class
+        public static T GetPropertyAttribute<T>(this PropertyInfo prop)
+            where T : class
         {
             return prop.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+        }
+
+        public static T GetClassAttribute<T>(this Type type)
+            where T : class
+        {
+            return type.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
         }
 
         public static string ConstructTestMessageForMissingArrays<T>(this IEnumerable<T> items, string msg)
