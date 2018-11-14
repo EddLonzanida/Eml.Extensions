@@ -37,16 +37,16 @@ namespace Eml.Extensions
         /// <summary>
         /// Copy all directory contents recursively.
         /// </summary>
-        public static void CopyFolderTo(this DirectoryInfo sourceDir, string destDirName, bool overwrite = true)
+        public static void CopyFolderTo(this DirectoryInfo sourceDir, string destDirName, bool overwrite = true, string fileSearchPattern = "")
         {
-            if (!sourceDir.Exists)  throw new DirectoryNotFoundException($"Source directory does not exist or could not be found: {sourceDir}");
+            if (!sourceDir.Exists) throw new DirectoryNotFoundException($"Source directory does not exist or could not be found: {sourceDir}");
 
             if (!Directory.Exists(destDirName)) Directory.CreateDirectory(destDirName);
 
             var dirs = sourceDir.GetDirectories();
+            var files = string.IsNullOrWhiteSpace(fileSearchPattern) ? sourceDir.GetFiles() : sourceDir.GetFiles(fileSearchPattern);
 
-            // Get the files in the directory and copy them to the new location.
-            foreach (var file in sourceDir.GetFiles())
+            foreach (var file in files)
             {
                 var tempPath = Path.Combine(destDirName, file.Name);
 
