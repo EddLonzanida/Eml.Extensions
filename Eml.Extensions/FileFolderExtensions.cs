@@ -37,7 +37,7 @@ namespace Eml.Extensions
         /// <summary>
         /// Copy all directory contents recursively.
         /// </summary>
-        private static void CopyTo(this DirectoryInfo sourceDir, string destDirName, bool overwrite = true)
+        public static void CopyTo(this DirectoryInfo sourceDir, string destDirName, bool overwrite = true)
         {
             if (!sourceDir.Exists)
             {
