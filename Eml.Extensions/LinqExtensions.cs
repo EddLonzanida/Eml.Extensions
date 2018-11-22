@@ -47,9 +47,10 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Convert Lists into MVC-ish dropdown list. Call the ToMvcSelectList extenstion when using HTML.DropDownListFor.
+        /// Set includeDefaultValue = false to exclude the default value:  '- Select -'
         /// </summary>
         public static IEnumerable<SelectListItem> ToSelectListItems<T, TName, TValue>(this List<T> items,
-            Func<T, TValue> valueSelector, Func<T, TName> nameSelector)
+            Func<T, TValue> valueSelector, Func<T, TName> nameSelector, bool includeDefaultValue = true)
             where T : class
         {
             var tmpList = items
@@ -62,7 +63,10 @@ namespace Eml.Extensions
                 Value = valueSelector(item).ToString()   //valueSelector
             }).ToList();
 
-            selectListItems.Insert(0, new SelectListItem { Text = "- Select - ", Value = "" });
+            if (includeDefaultValue)
+            {
+                selectListItems.Insert(0, new SelectListItem { Text = "- Select - ", Value = "" });
+            }
 
             return selectListItems;
         }
