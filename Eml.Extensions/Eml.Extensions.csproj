@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
       <TargetFrameworks>net462;net47;net471;net472;netstandard2.0</TargetFrameworks>
       <Description>Collection of useful Extensions gathered along the way.</Description>
