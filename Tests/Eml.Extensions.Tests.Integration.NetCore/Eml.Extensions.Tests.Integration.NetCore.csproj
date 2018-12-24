@@ -1,16 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Shouldly" Version="3.0.1" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="Shouldly" Version="3.0.2" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.console" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
