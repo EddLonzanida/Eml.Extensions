@@ -3,11 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eml.Extensions", "Eml.Extensions\Eml.Extensions.csproj", "{8DC93F2B-39D0-45D8-8387-16F189E1E1A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eml.Extensions", "Eml.Extensions\Eml.Extensions.csproj", "{8DC93F2B-39D0-45D8-8387-16F189E1E1A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8E9642D3-7A20-4C78-AD63-216DB60E664F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eml.Extensions.Tests.Unit", "Tests\Eml.Extensions.Tests.Unit\Eml.Extensions.Tests.Unit.csproj", "{A100E1AA-2AC4-48A0-B611-8E2987E6368C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestArtifactsNetCore", "TestArtifactsNetCore", "{B569289F-17D0-43F1-8B28-6BB8F5C80B1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestArtifactsNetFull", "TestArtifactsNetFull", "{9535B2F1-F7E0-4678-A2FF-38F74560BDBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assembly1", "Tests\TestArtifactsNetCore\Assembly1\Assembly1.csproj", "{C8787308-8BCA-4B79-9200-C43456329CC4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Assembly2", "Tests\TestArtifactsNetCore\Assembly2\Assembly2.csproj", "{F0A24EA1-F8A8-490B-B288-9906DB42E37B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eml.Extensions.Tests.Integration.NetFull", "Tests\Eml.Extensions.Tests.Integration.NetFull\Eml.Extensions.Tests.Integration.NetFull.csproj", "{670FC60B-47AE-4174-9585-34EED0E79CBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eml.Extensions.Tests.Integration.NetCore", "Tests\Eml.Extensions.Tests.Integration.NetCore\Eml.Extensions.Tests.Integration.NetCore.csproj", "{58224342-8C31-4103-94D8-010905AB9170}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly1NetFull", "Tests\TestArtifactsNetFull\Assembly1\Assembly1NetFull.csproj", "{3F71CA7D-C767-4D2E-BB22-D10CD7642296}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly2NetFull", "Tests\TestArtifactsNetFull\Assembly2\Assembly2NetFull.csproj", "{220B7CDE-DEB8-4376-842E-A6814E13CA97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,16 +33,43 @@ Global
 		{8DC93F2B-39D0-45D8-8387-16F189E1E1A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DC93F2B-39D0-45D8-8387-16F189E1E1A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DC93F2B-39D0-45D8-8387-16F189E1E1A6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A100E1AA-2AC4-48A0-B611-8E2987E6368C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A100E1AA-2AC4-48A0-B611-8E2987E6368C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A100E1AA-2AC4-48A0-B611-8E2987E6368C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A100E1AA-2AC4-48A0-B611-8E2987E6368C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8787308-8BCA-4B79-9200-C43456329CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8787308-8BCA-4B79-9200-C43456329CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8787308-8BCA-4B79-9200-C43456329CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8787308-8BCA-4B79-9200-C43456329CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0A24EA1-F8A8-490B-B288-9906DB42E37B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0A24EA1-F8A8-490B-B288-9906DB42E37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0A24EA1-F8A8-490B-B288-9906DB42E37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0A24EA1-F8A8-490B-B288-9906DB42E37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{670FC60B-47AE-4174-9585-34EED0E79CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{670FC60B-47AE-4174-9585-34EED0E79CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{670FC60B-47AE-4174-9585-34EED0E79CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{670FC60B-47AE-4174-9585-34EED0E79CBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58224342-8C31-4103-94D8-010905AB9170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58224342-8C31-4103-94D8-010905AB9170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58224342-8C31-4103-94D8-010905AB9170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58224342-8C31-4103-94D8-010905AB9170}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F71CA7D-C767-4D2E-BB22-D10CD7642296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F71CA7D-C767-4D2E-BB22-D10CD7642296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F71CA7D-C767-4D2E-BB22-D10CD7642296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F71CA7D-C767-4D2E-BB22-D10CD7642296}.Release|Any CPU.Build.0 = Release|Any CPU
+		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A100E1AA-2AC4-48A0-B611-8E2987E6368C} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
+		{B569289F-17D0-43F1-8B28-6BB8F5C80B1C} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
+		{9535B2F1-F7E0-4678-A2FF-38F74560BDBE} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
+		{C8787308-8BCA-4B79-9200-C43456329CC4} = {B569289F-17D0-43F1-8B28-6BB8F5C80B1C}
+		{F0A24EA1-F8A8-490B-B288-9906DB42E37B} = {B569289F-17D0-43F1-8B28-6BB8F5C80B1C}
+		{670FC60B-47AE-4174-9585-34EED0E79CBE} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
+		{58224342-8C31-4103-94D8-010905AB9170} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
+		{3F71CA7D-C767-4D2E-BB22-D10CD7642296} = {9535B2F1-F7E0-4678-A2FF-38F74560BDBE}
+		{220B7CDE-DEB8-4376-842E-A6814E13CA97} = {9535B2F1-F7E0-4678-A2FF-38F74560BDBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DBA8F2D7-53C7-42A7-96DE-04376EB0B4E0}

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+#if NETCORE
+using System.Reflection;
+#endif
+
 namespace Eml.Extensions
 {
     public static class StringExtensions
@@ -73,18 +77,18 @@ namespace Eml.Extensions
             return new string(a);
         }
 
-        public static string ToProperCase(this string s, char delimeter)
+        public static string ToProperCase(this string s, char delimiter = '.')
         {
             var result = s;
             var aWords = new List<string>();
 
-            aWords.AddRange(s.Split(delimeter));
+            aWords.AddRange(s.Split(delimiter));
 
             if (aWords.Count < 1) return result;
             if (aWords.Count == 1) return s.UppercaseFirst();
 
             aWords = aWords.ConvertAll(UppercaseFirst);
-            result = string.Join(delimeter.ToString(), aWords.ToArray());
+            result = string.Join(delimiter.ToString(), aWords.ToArray());
 
             return result;
         }
@@ -96,9 +100,108 @@ namespace Eml.Extensions
         /// <returns></returns>
         public static string ToSpaceDelimitedWords(this string word)
         {
-            var result = Regex.Replace(word, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ");
+            var result = Regex.Replace(word, @"\s\s+", " ");
 
-            return result.ToProperCase(' ');
+            result = Regex.Replace(result, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ")
+               .ToProperCase(' ')
+               .Trim();
+
+            return result;
+        }
+
+        public static void TrimStringProperties<T>(this T objInstance)
+            where T : class
+        {
+            var objType = objInstance.GetType();
+            var props = objType.GetProperties();
+
+            foreach (var p in props)
+            {
+                var propertyType = p.PropertyType.Name;
+
+                if (propertyType != "String" || !p.CanWrite) continue;
+
+                var oValue = p.GetValue(objInstance);
+
+                if (oValue == null) continue;
+
+                var propertyValue = oValue.ToString().Trim();
+
+                p.SetValue(objInstance, propertyValue);
+            }
+        }
+
+        public static string Pluralize(this string text)
+        {
+            var newWord = text.Trim();
+            var word = text.Trim();
+
+            if (string.IsNullOrWhiteSpace(word)) return string.Empty;
+
+            var a = word.ToCharArray();
+            var lastLetter = a[a.Length - 1];
+            var isLower = char.IsLower(lastLetter);
+            string append = "";
+
+            var exceptions = new Dictionary<string, string> {
+                { "man", "men" },
+                { "woman", "women" },
+                { "child", "children" },
+                { "tooth", "teeth" },
+                { "foot", "feet" },
+                { "mouse", "mice" },
+                { "belief", "beliefs" } };
+
+            if (exceptions.ContainsKey(word.ToLowerInvariant()))
+            {
+                return exceptions[word.ToLowerInvariant()];
+            }
+
+            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("ay", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("ey", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("iy", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("oy", StringComparison.OrdinalIgnoreCase) &&
+                !word.EndsWith("uy", StringComparison.OrdinalIgnoreCase))
+            {
+                append = isLower ? "ies" : "IES";
+
+                return newWord.Substring(0, newWord.Length - 1) + append;
+            }
+
+            if (word.EndsWith("us", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase) 
+                || word.EndsWith("x", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase)
+                || word.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase))
+            {
+                append = isLower ? "es" : "ES";
+
+                return newWord + append;
+            }
+
+            if (word.EndsWith("s", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return newWord;
+            }
+
+            if (word.EndsWith("f", StringComparison.InvariantCultureIgnoreCase) && word.Length > 1)
+            {
+                append = isLower ? "ves" : "VES";
+
+                return newWord.Substring(0, newWord.Length - 1) + append;
+            }
+
+            if (word.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase) && word.Length > 2)
+            {
+                append = isLower ? "ves" : "VES";
+
+                return newWord.Substring(0, newWord.Length - 2) + append;
+            }
+
+            append = isLower ? "s" : "S";
+
+            return newWord + append;
         }
     }
 }

@@ -1,7 +1,8 @@
-﻿using Shouldly;
+﻿using Assembly1;
+using Shouldly;
 using Xunit;
 
-namespace Eml.Extensions.Tests.Unit
+namespace Eml.Extensions.Tests.Integration.NetCore
 {
     public class StringExtensionsTests
     {
@@ -35,9 +36,37 @@ namespace Eml.Extensions.Tests.Unit
         [InlineData("oneTwothree", "One Twothree")]
         [InlineData("One Two Three", "One Two Three")]
         [InlineData("one Two three", "One Two Three")]
+        [InlineData(" one  Two       three ", "One Two Three")]
         public void ToSpaceDelimitedWords_ShouldDelimitedWords(string sut, string expectedResult)
         {
             sut.ToSpaceDelimitedWords().ShouldBe(expectedResult);
+        }
+
+        [Fact]
+        public void TrimStringProperties_ShouldTrimProperties()
+        {
+            const string LAST_NAME = "Last Name";
+            const string FIRST_NAME = "First Name";
+
+            var sut = new TestClass { FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} " };
+
+            sut.TrimStringProperties();
+
+            sut.FirstName.ShouldBe(FIRST_NAME);
+            sut.LastName.ShouldBe(LAST_NAME);
+        }
+
+        [Theory]
+        [InlineData("company", "companies")]
+        [InlineData("COMPANY", "COMPANIES")]
+        [InlineData("COMPANy", "COMPANies")]
+        [InlineData("Title", "Titles")]
+        [InlineData("TITLE", "TITLES")]
+        [InlineData("Tab", "Tabs")]
+        [InlineData("TAB", "TABS")]
+        public void Pluralize_ShouldPluralize(string sut, string expectedResult)
+        {
+            sut.Pluralize().ShouldBe(expectedResult);
         }
     }
 }
