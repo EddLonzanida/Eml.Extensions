@@ -33,6 +33,8 @@ namespace Eml.Extensions
                 assemblyPatterns.AddRange(defaultPattern);
             }
 
+            if (!Patterns.Any() && !includeDefaultPattern) throw new Exception("Pattern is required.");
+
             if (!Patterns.Any()) return assemblyPatterns;
 
             assemblyPatterns.AddRange(Patterns);
