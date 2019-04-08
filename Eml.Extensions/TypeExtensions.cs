@@ -185,15 +185,15 @@ namespace Eml.Extensions
                 .ToList();
         }
 
-        public static List<string> GetClassNames(this Assembly assembly, string nameSpace)
-        {
-            return assembly.GetClasses(nameSpace).Select(type => type.Name)
-                .ToList();
-        }
-
         public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> selector)
         {
             return assembly.GetClasses(selector)
+                .Select(type => type.Name)
+                .ToList();
+        }
+        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
+        {
+            return assemblies.GetClasses(selector)
                 .Select(type => type.Name)
                 .ToList();
         }
@@ -204,28 +204,16 @@ namespace Eml.Extensions
                 .ToList();
         }
 
-        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
-        {
-            return assemblies.GetClasses(selector)
-                .Select(type => type.Name)
-                .ToList();
-        }
-
-        public static List<Type> GetClasses(this Assembly assembly, string nameSpace)
-        {
-            return assembly.GetTypes(nameSpace, type => !type.IsAbstract);
-        }
-
         public static List<Type> GetClasses(this Assembly assembly, bool includeAbstract = false)
         {
-            return includeAbstract ? assembly.GetTypes(type => true) : assembly.GetTypes(type => !type.IsAbstract);
+            return includeAbstract ? assembly.GetTypes(type => !type.IsInterface) : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract);
         }
 
         public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector, bool includeAbstract = false)
         {
-            return includeAbstract 
-                ? assembly.GetTypes(selector) 
-                : assembly.GetTypes(type => !type.IsAbstract && selector(type));
+            return includeAbstract
+                ? assembly.GetTypes(type => !type.IsInterface && selector(type)  )
+                : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && selector(type));
         }
 
         public static List<string> GetInterfaceNames(this Assembly assembly, string nameSpace)
