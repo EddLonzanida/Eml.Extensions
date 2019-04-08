@@ -22,9 +22,16 @@ namespace Eml.Extensions
             Patterns.Sort();
         }
 
-        public List<string> Build()
+        public List<string> Build(bool includeDefaultPattern = true)
         {
-            var assemblyPatterns = GetDefaultPatterns();
+            var assemblyPatterns = new List<string>();
+
+            if (includeDefaultPattern)
+            {
+                var defaultPattern = GetDefaultPatterns();
+
+                assemblyPatterns.AddRange(defaultPattern);
+            }
 
             if (!Patterns.Any()) return assemblyPatterns;
 
@@ -36,7 +43,7 @@ namespace Eml.Extensions
             return results.Distinct().ToList();
         }
 
-        private List<string> GetDefaultPatterns()
+        private static List<string> GetDefaultPatterns()
         {
 #if NETFULL
             return new List<string>(new[] { $"{DEFAULT_PATTERN}*.dll", $"{DEFAULT_PATTERN}*.exe" });
