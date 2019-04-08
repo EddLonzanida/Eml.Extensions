@@ -68,5 +68,14 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         {
             sut.Pluralize().ShouldBe(expectedResult);
         }
+
+
+        [Theory]
+        [InlineData("Generic`1", "`1", "Generic")]
+        [InlineData("Generic`1`1", "`1", "Generic")]
+        public void TrimRight_ShouldRemoveLastString(string sut, string trim, string expectedResult)
+        {
+            sut.TrimRight(trim).ShouldBe(expectedResult);
+        }
     }
 }

@@ -211,5 +211,17 @@ namespace Eml.Extensions
         {
             return charCount >= text.Length ? text : text.Substring(text.Length - charCount);
         }
+
+        /// <summary>
+        /// Remove string at the end.
+        /// </summary>
+        public static string TrimRight(this string text, string tail)
+        {
+            var index = text.IndexOf(tail, StringComparison.CurrentCulture);
+
+            if (index > 0) text = text.Substring(0, index);
+
+            return text;
+        }
     }
 }
