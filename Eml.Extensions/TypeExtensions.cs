@@ -198,6 +198,19 @@ namespace Eml.Extensions
                 .ToList();
         }
 
+        public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
+        {
+            return assemblies.SelectMany(type => type.GetClasses(selector))
+                .ToList();
+        }
+
+        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
+        {
+            return assemblies.GetClasses(selector)
+                .Select(type => type.Name)
+                .ToList();
+        }
+
         public static List<Type> GetClasses(this Assembly assembly, string nameSpace)
         {
             return assembly.GetTypes(nameSpace, type => !type.IsAbstract);
@@ -208,9 +221,11 @@ namespace Eml.Extensions
             return includeAbstract ? assembly.GetTypes(type => true) : assembly.GetTypes(type => !type.IsAbstract);
         }
 
-        public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector)
+        public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector, bool includeAbstract = false)
         {
-            return assembly.GetTypes(type => !type.IsAbstract && selector(type));
+            return includeAbstract 
+                ? assembly.GetTypes(selector) 
+                : assembly.GetTypes(type => !type.IsAbstract && selector(type));
         }
 
         public static List<string> GetInterfaceNames(this Assembly assembly, string nameSpace)
