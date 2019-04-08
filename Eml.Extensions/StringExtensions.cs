@@ -141,7 +141,7 @@ namespace Eml.Extensions
             var a = word.ToCharArray();
             var lastLetter = a[a.Length - 1];
             var isLower = char.IsLower(lastLetter);
-            string append = "";
+            var append = "";
 
             var exceptions = new Dictionary<string, string> {
                 { "man", "men" },
@@ -202,6 +202,14 @@ namespace Eml.Extensions
             append = isLower ? "s" : "S";
 
             return newWord + append;
+        }
+
+        /// <summary>
+        /// Get the last n characters of a string.
+        /// </summary>
+        public static string GetLast(this string text, int charCount)
+        {
+            return charCount >= text.Length ? text : text.Substring(text.Length - charCount);
         }
     }
 }
