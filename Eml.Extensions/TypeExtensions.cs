@@ -200,7 +200,7 @@ namespace Eml.Extensions
 
         public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
         {
-            return assemblies.SelectMany(type => type.GetClasses(selector))
+            return assemblies.SelectMany(type => type.GetClasses(selector, true))
                 .ToList();
         }
 
