@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly1NetFull", "Tests\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly2NetFull", "Tests\TestArtifactsNetFull\Assembly2\Assembly2NetFull.csproj", "{220B7CDE-DEB8-4376-842E-A6814E13CA97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmlSolutions", "Tests\TestArtifactsNetCore\EmlSolutions\EmlSolutions.csproj", "{414D31A0-0BBB-4C06-A426-D47D5FECB37D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{220B7CDE-DEB8-4376-842E-A6814E13CA97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{414D31A0-0BBB-4C06-A426-D47D5FECB37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{414D31A0-0BBB-4C06-A426-D47D5FECB37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{414D31A0-0BBB-4C06-A426-D47D5FECB37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{414D31A0-0BBB-4C06-A426-D47D5FECB37D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{58224342-8C31-4103-94D8-010905AB9170} = {8E9642D3-7A20-4C78-AD63-216DB60E664F}
 		{3F71CA7D-C767-4D2E-BB22-D10CD7642296} = {9535B2F1-F7E0-4678-A2FF-38F74560BDBE}
 		{220B7CDE-DEB8-4376-842E-A6814E13CA97} = {9535B2F1-F7E0-4678-A2FF-38F74560BDBE}
+		{414D31A0-0BBB-4C06-A426-D47D5FECB37D} = {B569289F-17D0-43F1-8B28-6BB8F5C80B1C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DBA8F2D7-53C7-42A7-96DE-04376EB0B4E0}
