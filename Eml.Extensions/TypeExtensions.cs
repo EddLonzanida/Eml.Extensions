@@ -99,17 +99,19 @@ namespace Eml.Extensions
 
             return dependencies.Where(whereClause)
                 .Select(r => GetAssembly(r.Name))
+                .Distinct()
                 .ToList();
         }
 
         public static List<Assembly> GetReferencingAssemblies(IReadOnlyCollection<string> startsWithAssemblyPattern)
         {
-            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern)
-                .Build()
+            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build()
                 .ConvertAll(r => r.ToLower());
             var referencedAssemblies = withPattern
                 .Select(p => GetReferencingAssemblies(r => r.Name.ToLower().StartsWith(p)))
-                .SelectMany(assembly => assembly.Select(r => r));
+                .SelectMany(assembly => assembly.Select(r => r))
+                .Distinct()
+                ;
 
             return referencedAssemblies.ToList();
         }
@@ -212,7 +214,7 @@ namespace Eml.Extensions
         public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector, bool includeAbstract = false)
         {
             return includeAbstract
-                ? assembly.GetTypes(type => !type.IsInterface && selector(type)  )
+                ? assembly.GetTypes(type => !type.IsInterface && selector(type))
                 : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && selector(type));
         }
 
