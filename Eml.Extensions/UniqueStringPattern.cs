@@ -6,8 +6,6 @@ namespace Eml.Extensions
 {
     public sealed class UniqueStringPattern : IDisposable
     {
-        private const string DEFAULT_PATTERN = "Eml.";
-
         private List<string> Patterns { get; } = new List<string>();
 
         public UniqueStringPattern(IReadOnlyCollection<string> patterns)
@@ -19,21 +17,14 @@ namespace Eml.Extensions
                 .ToList()
                 .ConvertAll(r => r.Trim());
 
+            if (!Patterns.Any()) throw new Exception("Pattern is required.");
+
             Patterns.Sort();
         }
 
-        public List<string> Build(bool includeDefaultPattern = true)
+        public List<string> Build()
         {
             var assemblyPatterns = new List<string>();
-
-            if (includeDefaultPattern)
-            {
-                var defaultPattern = GetDefaultPatterns();
-
-                assemblyPatterns.AddRange(defaultPattern);
-            }
-
-            if (!Patterns.Any() && !includeDefaultPattern) throw new Exception("Pattern is required.");
 
             if (!Patterns.Any()) return assemblyPatterns;
 
@@ -45,19 +36,9 @@ namespace Eml.Extensions
             return results.Distinct().ToList();
         }
 
-        private static List<string> GetDefaultPatterns()
-        {
-#if NETFULL
-            return new List<string>(new[] { $"{DEFAULT_PATTERN}*.dll", $"{DEFAULT_PATTERN}*.exe" });
-#endif
-#if NETCORE
-            return new List<string>(new[] { DEFAULT_PATTERN });
-#endif
-        }
-
         public void Dispose()
         {
-            Patterns.Clear();
+            Patterns?.Clear();
         }
     }
 }

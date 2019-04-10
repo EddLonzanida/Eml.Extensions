@@ -22,8 +22,9 @@ namespace Eml.Extensions.Tests.Integration.NetFull
             var uniqueStringPattern = new UniqueStringPattern(new[] { "Eml.*.dll", "Eml.*.exe", "", null, "AppPrefix*.dll" }).Build();
 
             uniqueStringPattern.Count.ShouldBe(3);
-            uniqueStringPattern.First().ShouldBe("Eml.*.dll");
-            uniqueStringPattern.Last().ShouldBe("AppPrefix*.dll");
+            uniqueStringPattern.First().ShouldBe("AppPrefix*.dll");
+            uniqueStringPattern[1].ShouldBe("Eml.*.dll");
+            uniqueStringPattern.Last().ShouldBe("Eml.*.exe");
         }
     }
 }

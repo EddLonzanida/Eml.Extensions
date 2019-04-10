@@ -9,7 +9,7 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [Fact]
         public void UniqueString_ShouldContainOneEml()
         {
-            var uniqueStringPattern = new UniqueStringPattern(new[] { "Eml" }).Build();
+            var uniqueStringPattern = new UniqueStringPattern(new[] { "Eml", "Eml." }).Build();
 
             uniqueStringPattern.Count.ShouldBe(1);
             uniqueStringPattern.First().ShouldBe("Eml");
@@ -18,7 +18,7 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [Fact]
         public void UniqueString_ShouldContainDistinct()
         {
-            var uniqueStringPattern = new UniqueStringPattern(new[] { "Eml" }).Build();
+            var uniqueStringPattern = new UniqueStringPattern(new[] { "Eml", "Eml." }).Build();
 
             uniqueStringPattern.Count.ShouldBe(1);
             uniqueStringPattern.First().ShouldBe("Eml");
@@ -33,5 +33,15 @@ namespace Eml.Extensions.Tests.Integration.NetCore
             uniqueStringPattern.First().ShouldBe("AppPrefix");
             uniqueStringPattern.Last().ShouldBe("Eml");
         }
+
+        [Fact]
+        public void UniqueString_ShouldReturnEmlSolutions()
+        {
+            var uniqueStringPattern = new UniqueStringPattern(new[] { "EmlSolutions." }).Build();
+
+            uniqueStringPattern.Count.ShouldBe(1);
+            uniqueStringPattern.First().ShouldBe("EmlSolutions.");
+        }
+
     }
 }

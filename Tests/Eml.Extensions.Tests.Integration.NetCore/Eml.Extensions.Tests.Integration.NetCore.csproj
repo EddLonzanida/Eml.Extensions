@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\Eml.Extensions\Eml.Extensions.csproj" />
     <ProjectReference Include="..\TestArtifactsNetCore\Assembly1\Assembly1.csproj" />
     <ProjectReference Include="..\TestArtifactsNetCore\Assembly2\Assembly2.csproj" />
+    <ProjectReference Include="..\TestArtifactsNetCore\EmlSolutions\EmlSolutions.csproj" />
   </ItemGroup>
 
 </Project>
