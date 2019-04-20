@@ -60,10 +60,18 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [InlineData("company", "companies")]
         [InlineData("COMPANY", "COMPANIES")]
         [InlineData("COMPANy", "COMPANies")]
+        [InlineData("COMPANies", "COMPANies")]
         [InlineData("Title", "Titles")]
         [InlineData("TITLE", "TITLES")]
         [InlineData("Tab", "Tabs")]
-        [InlineData("TAB", "TABS")]
+        [InlineData("man", "men")]
+        [InlineData("woman", "women")]
+        [InlineData("child", "children")]
+        [InlineData("children", "children")]
+        [InlineData("tooth", "teeth")]
+        [InlineData("foot", "feet")]
+        [InlineData("mouse", "mice")]
+        [InlineData("belief", "beliefs")]
         public void Pluralize_ShouldPluralize(string sut, string expectedResult)
         {
             sut.Pluralize().ShouldBe(expectedResult);

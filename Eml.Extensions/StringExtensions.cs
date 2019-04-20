@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 #if NETCORE
@@ -135,6 +136,7 @@ namespace Eml.Extensions
         {
             var newWord = text.Trim();
             var word = text.Trim();
+            var wordLowered = word.ToLowerInvariant();
 
             if (string.IsNullOrWhiteSpace(word)) return string.Empty;
 
@@ -152,9 +154,20 @@ namespace Eml.Extensions
                 { "mouse", "mice" },
                 { "belief", "beliefs" } };
 
-            if (exceptions.ContainsKey(word.ToLowerInvariant()))
+            if (exceptions.ContainsKey(wordLowered))
             {
-                return exceptions[word.ToLowerInvariant()];
+                return exceptions[wordLowered];
+            }
+
+            // If it's already pluralized
+            if (exceptions.Where(w => w.Value == wordLowered).ToList().Count > 0)
+            {
+                return text;
+            }
+
+            if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
+            {
+                return text;
             }
 
             if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase) &&
@@ -170,7 +183,7 @@ namespace Eml.Extensions
             }
 
             if (word.EndsWith("us", StringComparison.InvariantCultureIgnoreCase)
-                || word.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase) 
+                || word.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase)
                 || word.EndsWith("x", StringComparison.InvariantCultureIgnoreCase)
                 || word.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase)
                 || word.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase))
