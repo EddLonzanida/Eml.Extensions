@@ -230,7 +230,7 @@ namespace Eml.Extensions
         /// </summary>
         public static string TrimRight(this string text, string tail)
         {
-            var index = text.IndexOf(tail, StringComparison.CurrentCulture);
+            var index = text.IndexOf(tail, StringComparison.CurrentCultureIgnoreCase);
 
             if (index > 0) text = text.Substring(0, index);
 

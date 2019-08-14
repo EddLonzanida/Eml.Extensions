@@ -81,6 +81,9 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [Theory]
         [InlineData("Generic`1", "`1", "Generic")]
         [InlineData("Generic`1`1", "`1", "Generic")]
+        [InlineData("IntellisenseCountConfigParser", "Config", "IntellisenseCount")]
+        [InlineData("IntellisenseCountConfigParser", "config", "IntellisenseCount")]
+        [InlineData("IntellisenseCountConfigParser", "ConfigParser", "IntellisenseCount")]
         public void TrimRight_ShouldRemoveLastString(string sut, string trim, string expectedResult)
         {
             sut.TrimRight(trim).ShouldBe(expectedResult);
