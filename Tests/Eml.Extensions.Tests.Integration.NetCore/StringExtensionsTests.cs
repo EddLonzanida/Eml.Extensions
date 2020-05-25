@@ -7,8 +7,10 @@ namespace Eml.Extensions.Tests.Integration.NetCore
     public class StringExtensionsTests
     {
         [Theory]
+        [InlineData("FIRST1", "First1", '.')]
         [InlineData("first1", "First1", '.')]
         [InlineData("first2.second", "First2.Second", '.')]
+        [InlineData("FIRST2.SECOND", "First2.Second", '.')]
         [InlineData("first3..second", "First3..Second", '.')]
         [InlineData(".first4..second", ".First4..Second", '.')]
         [InlineData(".first5..second.", ".First5..Second.", '.')]
@@ -20,9 +22,9 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [InlineData(".first6...second..", ".First6...Second..", '.')]
         [InlineData("...first7...second..", "...First7...Second..", '.')]
         [InlineData("...first7...second...", "...First7...Second...", '.')]
-        public void ToProperCase_ShouldCapitalizeFirstLetters(string sut, string expectedResult, char delimeter)
+        public void ToProperCase_ShouldCapitalizeFirstLetters(string sut, string expectedResult, char delimiter)
         {
-            sut.ToProperCase(delimeter).ShouldBe(expectedResult);
+            sut.ToProperCase(delimiter).ShouldBe(expectedResult);
         }
 
         [Theory]

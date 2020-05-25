@@ -80,13 +80,13 @@ namespace Eml.Extensions
 
         public static string ToProperCase(this string s, char delimiter = '.')
         {
-            var result = s;
+            var result = s.ToLower();
             var aWords = new List<string>();
 
-            aWords.AddRange(s.Split(delimiter));
+            aWords.AddRange(result.Split(delimiter));
 
-            if (aWords.Count < 1) return result;
-            if (aWords.Count == 1) return s.UppercaseFirst();
+            if (aWords.Count < 1) return s;
+            if (aWords.Count == 1) return result.UppercaseFirst();
 
             aWords = aWords.ConvertAll(UppercaseFirst);
             result = string.Join(delimiter.ToString(), aWords.ToArray());
