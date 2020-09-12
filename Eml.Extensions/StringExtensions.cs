@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 #if NETCORE
@@ -12,14 +13,14 @@ namespace Eml.Extensions
     public static class StringExtensions
     {
         /// <summary>
-        /// Case insensitive comparison.
+        /// Case insensitive comparison. Trims both words before comparing.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         public static bool IsEqualTo(this string source, string value)
         {
-            return string.Equals(source.ToLower(), value.ToLower(), StringComparison.CurrentCultureIgnoreCase);
+            return string.Equals(source, value, StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
@@ -235,6 +236,32 @@ namespace Eml.Extensions
             if (index > 0) text = text.Substring(0, index);
 
             return text;
+        }
+
+       /// <summary>
+       /// Used to create jwt
+       /// </summary>
+       /// <param name="textToEncode"></param>
+       /// <returns></returns>
+        public static string Base64Encode(this string textToEncode)
+        {
+            var textAsBytes = Encoding.UTF8.GetBytes(textToEncode);
+
+            return Convert.ToBase64String(textAsBytes);
+        }
+
+        /// <summary>
+        /// Used by http helpers. Create Basic authorization token.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static string ToBasicAuthenticationEncode(this string userName, string password)
+        {
+            var token = $"{userName}:{password}".Base64Encode();
+            var basicAuthentication = $"Basic {token}";
+
+            return basicAuthentication;
         }
     }
 }

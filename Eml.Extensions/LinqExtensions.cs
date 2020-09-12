@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace Eml.Extensions
 {
@@ -24,14 +23,6 @@ namespace Eml.Extensions
             IEnumerable<TSource> listToMerge, Func<TSource, TSource, bool> comparer)
         {
             return mainList.Intersect(listToMerge, new LambdaEqualityComparer<TSource>(comparer)).ToList();
-        }
-
-        public static async Task ForEachAsync<T>(this IEnumerable<T> list, Func<T, Task> func)
-        {
-            foreach (var value in list)
-            {
-                await func(value);
-            }
         }
 
         public static IQueryable<TSource> Paginate<TSource>(this IQueryable<TSource> source, int pageNumber, int pageSize)
