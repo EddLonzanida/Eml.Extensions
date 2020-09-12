@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-#if NETCORE
-using System.Reflection;
-#endif
-
 namespace Eml.Extensions
 {
     public static class StringExtensions
@@ -20,7 +16,7 @@ namespace Eml.Extensions
         /// <returns></returns>
         public static bool IsEqualTo(this string source, string value)
         {
-            return string.Equals(source, value, StringComparison.CurrentCultureIgnoreCase);
+            return string.Equals(source.Trim(), value.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
