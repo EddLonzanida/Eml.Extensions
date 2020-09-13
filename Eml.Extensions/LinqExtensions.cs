@@ -37,6 +37,9 @@ namespace Eml.Extensions
         }
 
         /// <summary>
+        /// Sample nameSelector: r => r.Text
+        /// Sample valueSelector: r => r.Value
+        /// Will add dropdown default value: - Select - 
         /// Convert Lists into MVC-ish dropdown list. Call the ToMvcSelectList extenstion when using HTML.DropDownListFor.
         /// Set includeDefaultValue = false to exclude the default value:  '- Select -'
         /// </summary>
@@ -63,6 +66,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
+        /// Sample valueSelector: r => r.Value
         /// Get the value in a List. Throws an Exception when multiple records found.
         /// </summary>
         public static TValue GetValueAsync<T, TValue>(this List<T> items,
@@ -85,7 +89,15 @@ namespace Eml.Extensions
             return firstOrDefault;
         }
 
-        public static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> merge)
+        /// <summary>
+        /// Sample mergeExpression: Expression.And
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <param name="mergeExpression"></param>
+        /// <returns></returns>
+        public static Expression<T> Compose<T>(this Expression<T> first, Expression<T> second, Func<Expression, Expression, Expression> mergeExpression)
         {
             // build parameter map (from parameters of second to parameters of first)
             var map = first.Parameters.Select((f, i) => new { f, s = second.Parameters[i] }).ToDictionary(p => p.s, p => p.f);
@@ -94,7 +106,7 @@ namespace Eml.Extensions
             var secondBody = ParameterRebinder.ReplaceParameters(map, second.Body);
 
             // apply composition of lambda expression bodies to parameters from the first expression 
-            return Expression.Lambda<T>(merge(first.Body, secondBody), first.Parameters);
+            return Expression.Lambda<T>(mergeExpression(first.Body, secondBody), first.Parameters);
         }
 
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
@@ -105,6 +117,11 @@ namespace Eml.Extensions
         public static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> first, Expression<Func<T, bool>> second)
         {
             return first.Compose(second, Expression.Or);
+        }
+
+        public static Expression<Func<T, TResult>> ToExpression<T, TResult>(this Func<T, TResult> method)
+        {
+            return x => method(x);
         }
     }
 }
