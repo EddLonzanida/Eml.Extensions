@@ -1,5 +1,4 @@
-﻿using Assembly1;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Eml.Extensions.Tests.Integration.NetCore
@@ -39,24 +38,25 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [InlineData("One Two Three", "One Two Three")]
         [InlineData("one Two three", "One Two Three")]
         [InlineData(" one  Two       three ", "One Two Three")]
+        [InlineData("FulfillmentJobEnabled", "Fulfillment Job Enabled")]
         public void ToSpaceDelimitedWords_ShouldDelimitedWords(string sut, string expectedResult)
         {
             sut.ToSpaceDelimitedWords().ShouldBe(expectedResult);
         }
 
-        [Fact]
-        public void TrimStringProperties_ShouldTrimProperties()
-        {
-            const string LAST_NAME = "Last Name";
-            const string FIRST_NAME = "First Name";
+        //[Fact]
+        //public void TrimStringProperties_ShouldTrimProperties()
+        //{
+        //    const string LAST_NAME = "Last Name";
+        //    const string FIRST_NAME = "First Name";
 
-            var sut = new TestClass { FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} " };
+        //    var sut = new TestClass { FirstName = $"  {FIRST_NAME} ", LastName = $" {LAST_NAME} " };
 
-            sut.TrimStringProperties();
+        //    sut.TrimStringProperties();
 
-            sut.FirstName.ShouldBe(FIRST_NAME);
-            sut.LastName.ShouldBe(LAST_NAME);
-        }
+        //    sut.FirstName.ShouldBe(FIRST_NAME);
+        //    sut.LastName.ShouldBe(LAST_NAME);
+        //}
 
         [Theory]
         [InlineData("company", "companies")]
@@ -89,6 +89,22 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         public void TrimRight_ShouldRemoveLastString(string sut, string trim, string expectedResult)
         {
             sut.TrimRight(trim).ShouldBe(expectedResult);
+        }
+
+        [Theory]
+        [InlineData("pabbly_payment_success.json", "pabbly_", "payment_success.json")]
+        [InlineData("TxnEntityIntBase", "TxnEntity", "IntBase")]
+        public void TrimLeft_ShouldRemoveStartString(string sut, string trim, string expectedResult)
+        {
+            sut.TrimLeft(trim).ShouldBe(expectedResult);
+        }
+
+        [Theory]
+        [InlineData("pabbly_payment_success.json", "pabbly_", ".json", "payment_success")]
+        [InlineData("EntityIntBase", "TxnEntity", "Base", "EntityInt")]
+        public void TrimLeft_ShouldTrimLeftTrimRight(string sut, string trimLeft, string trimRight, string expectedResult)
+        {
+            sut.TrimLeft(trimLeft).TrimRight(trimRight).ShouldBe(expectedResult);
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿#if NETCORE
-using Microsoft.Extensions.DependencyModel;
-#endif
-
+﻿using Microsoft.Extensions.DependencyModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,74 +17,9 @@ namespace Eml.Extensions
         }
         public static Assembly GetAssembly(string assemblyName)
         {
-#if NETFULL
-            return Assembly.Load(assemblyName);
-#endif
-#if NETCORE
             return Assembly.Load(new AssemblyName(assemblyName));
-#endif
         }
 
-#if NETFULL
-        public static Assembly GetAssembly(this FileInfo fileInfo)
-        {
-            return Assembly.LoadFile(fileInfo.FullName);
-        }
-
-        public static Assembly GetAssemblyFromPath(string path)
-        {
-            var fileInfo = new FileInfo(path);
-
-            return fileInfo.GetAssembly();
-        }
-
-        /// <summary>
-        /// Search for *.dll 
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <returns></returns>
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory)
-        {
-            var files = Directory.GetFiles(directory.FullName, "*.dll").ToList();
-
-            return files
-               .Select(GetAssemblyFromPath)
-               .ToList();
-        }
-
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory, string filePattern)
-        {
-            var files = Directory.GetFiles(directory.FullName, filePattern).ToList();
-
-            return files
-              .Select(GetAssemblyFromPath)
-              .ToList();
-        }
-
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory, Func<string, bool> whereClause)
-        {
-            var files = Directory.GetFiles(directory.FullName).ToList();
-
-            return files
-                .Where(whereClause)
-                .Select(GetAssemblyFromPath)
-                .ToList();
-        }
-
-        public static string GetBinDirectory()
-        {
-            var binDirectory = Path.GetDirectoryName(System.Reflection.Assembly
-                .GetExecutingAssembly().GetName().CodeBase)?.Replace(@"file:\", string.Empty);
-
-            if (!Directory.Exists(binDirectory))
-            {
-                binDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            }
-
-            return binDirectory;
-        }
-#endif
-#if NETCORE
         public static string GetBinDirectory<T>()
         {
             return Path.GetDirectoryName(typeof(T).Assembly.Location);
@@ -95,20 +27,26 @@ namespace Eml.Extensions
 
         public static List<Assembly> GetReferencingAssemblies(Func<RuntimeLibrary, bool> whereClause)
         {
-            var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
+            var dependencies = DependencyContext.Default.RuntimeLibraries
+                .Where(whereClause);
 
-            return dependencies.Where(whereClause)
+            return dependencies
                 .Select(r => GetAssembly(r.Name))
                 .Distinct()
                 .ToList();
+
+            // TODO: determine if this is better
+            //return dependencies
+            //    .Select(r => r.GetType().Assembly)
+            //    .Distinct()
+            //    .ToList();
         }
 
-        public static List<Assembly> GetReferencingAssemblies(IReadOnlyCollection<string> startsWithAssemblyPattern)
+        public static List<Assembly> GetReferencingAssemblies(this IReadOnlyCollection<string> startsWithAssemblyPattern)
         {
-            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build()
-                .ConvertAll(r => r.ToLower());
+            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
             var referencedAssemblies = withPattern
-                .Select(p => GetReferencingAssemblies(r => r.Name.ToLower().StartsWith(p)))
+                .Select(p => GetReferencingAssemblies(r => r.Name.IsWithStart(p)))
                 .SelectMany(assembly => assembly.Select(r => r))
                 .Distinct()
                 ;
@@ -116,6 +54,17 @@ namespace Eml.Extensions
             return referencedAssemblies.ToList();
         }
 
+        public static List<Assembly> GetReferencingAssemblies(this IReadOnlyCollection<string> startsWithAssemblyPattern, Func<RuntimeLibrary, bool> whereClause)
+        {
+            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
+            var referencedAssemblies = withPattern
+                .Select(p => GetReferencingAssemblies(r => r.Name.IsWithStart(p) && whereClause(r)))
+                .SelectMany(assembly => assembly.Select(r => r))
+                .Distinct()
+                ;
+
+            return referencedAssemblies.ToList();
+        }
         public static List<Assembly> GetReferencingAssemblies()
         {
             var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
@@ -124,7 +73,6 @@ namespace Eml.Extensions
                 .Select(r => GetAssembly(r.Name))
                 .ToList();
         }
-#endif
 
         public static List<string> GetMemberNames(this Type type)
         {
@@ -159,9 +107,7 @@ namespace Eml.Extensions
         /// <summary>
         /// Uses BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
         /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static List<PropertyInfo> GetProperties2(this Type type)
+        public static List<PropertyInfo> GetPublicProperties(this Type type)
         {
             var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
 
@@ -170,39 +116,47 @@ namespace Eml.Extensions
 
         public static List<string> GetPropertyNames(this Type type)
         {
-            var properties = type.GetProperties2();
+            var properties = type.GetPublicProperties();
 
             return properties
                 .Select(property => property.Name)
                 .ToList();
         }
 
-        public static List<string> GetPropertyNames(this Type type, Func<PropertyInfo, bool> selector)
+        public static List<string> GetPropertyNames(this Type type, Func<PropertyInfo, bool> whereClause)
         {
-            var properties = type.GetProperties2();
+            var properties = type.GetPublicProperties();
 
             return properties
-                .Where(selector)
+                .Where(whereClause)
                 .Select(property => property.Name)
                 .ToList();
         }
 
-        public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> selector)
+        public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> whereClause, Func<string, string> valueSelector)
         {
-            return assembly.GetClasses(selector)
-                .Select(type => type.Name)
+            return assembly.GetClasses(whereClause)
+                .Select(type => valueSelector(type.Name))
                 .ToList();
         }
-        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
+
+        public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> whereClause)
         {
-            return assemblies.GetClasses(selector)
+            return assembly.GetClasses(whereClause)
                 .Select(type => type.Name)
                 .ToList();
         }
 
-        public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector, bool includeAbstract = false)
+        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
         {
-            return assemblies.SelectMany(assembly => assembly.GetClasses(selector, includeAbstract))
+            return assemblies.GetClasses(whereClause)
+                .Select(type => type.Name)
+                .ToList();
+        }
+
+        public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause, bool includeAbstract = false)
+        {
+            return assemblies.SelectMany(assembly => assembly.GetClasses(whereClause, includeAbstract))
                 .ToList();
         }
 
@@ -219,23 +173,23 @@ namespace Eml.Extensions
                 : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract);
         }
 
-        public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector, bool includeAbstract = false)
+        public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> whereClause, bool includeAbstract = false)
         {
             return includeAbstract
-                ? assembly.GetTypes(type => !type.IsInterface && selector(type))
-                : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && selector(type));
+                ? assembly.GetTypes(type => !type.IsInterface && whereClause(type))
+                : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && whereClause(type));
         }
 
         public static List<string> GetInterfaceNames(this Assembly assembly, string nameSpace)
         {
-            return assembly.GetTypes(nameSpace, type => type.IsInterface && !type.IsGenericType)
+            return assembly.GetTypes(nameSpace, type => type.IsInterface)
                 .Select(type => type.Name)
                 .ToList();
         }
 
-        public static List<string> GetInterfaceNames(this Assembly assembly, Func<Type, bool> selector)
+        public static List<string> GetInterfaceNames(this Assembly assembly, Func<Type, bool> whereClause)
         {
-            return assembly.GetInterfaces(selector)
+            return assembly.GetInterfaces(whereClause)
                 .Select(type => type.Name)
                 .ToList();
         }
@@ -247,31 +201,31 @@ namespace Eml.Extensions
                 .ToList();
         }
 
-        public static List<Type> GetInterfaces(this Assembly assembly, Func<Type, bool> selector)
+        public static List<Type> GetInterfaces(this Assembly assembly, Func<Type, bool> whereClause)
         {
-            return assembly.GetTypes(type => type.IsInterface && selector(type) && !type.IsGenericType);
+            return assembly.GetTypes(type => type.IsInterface && whereClause(type));
         }
 
         public static List<Type> GetInterfaces(this Assembly assembly)
         {
-            return assembly.GetTypes(type => type.IsInterface && !type.IsGenericType);
+            return assembly.GetTypes(type => type.IsInterface);
         }
 
-        public static List<Type> GetTypes(this Assembly assembly, string nameSpace, Func<Type, bool> selector)
+        public static List<Type> GetTypes(this Assembly assembly, string nameSpace, Func<Type, bool> whereClause)
         {
             return assembly.GetTypes()
                            .Where(type => string.Equals(type.Namespace, nameSpace, StringComparison.Ordinal)
                                           && type.IsPublic
-                                          && selector(type))
+                                          && whereClause(type))
                            .ToList();
         }
 
-        public static List<Type> GetTypes(this Assembly assembly, Func<Type, bool> selector)
+        public static List<Type> GetTypes(this Assembly assembly, Func<Type, bool> whereClause)
         {
             var types = assembly.GetTypes();
 
             return types
-                .Where(type => selector(type) && type.IsPublic)
+                .Where(type => whereClause(type) && type.IsPublic)
                 .ToList();
         }
 
@@ -287,11 +241,26 @@ namespace Eml.Extensions
             return type.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
         }
 
-        public static string ConstructTestMessageForMissingArrays<T>(this IEnumerable<T> items, string msg)
+        /// <summary>
+        /// TODO: Complete this!!
+        /// </summary>
+        public static bool IsSimpleType<T>(this Type type)
         {
-            var enumerable = items as T[] ?? items.ToArray();
-
-            return $"{Environment.NewLine}({enumerable.Count()}){msg}: {Environment.NewLine}    {string.Join(Environment.NewLine + "    ", enumerable.ToArray())}{Environment.NewLine}";
+            return
+                type.IsValueType ||
+                type.IsPrimitive ||
+                Convert.GetTypeCode(type) != TypeCode.Object ||
+                new Type[] {
+                    typeof(string),
+                    typeof(int),
+                    typeof(bool),
+                    typeof(decimal),
+                    typeof(float),
+                    typeof(DateTime),
+                    typeof(DateTimeOffset),
+                    typeof(TimeSpan),
+                    typeof(Guid)
+                }.Contains(type) ;
         }
     }
 }

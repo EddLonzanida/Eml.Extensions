@@ -48,5 +48,15 @@ namespace Eml.Extensions
 
             return DateTime.ParseExact(d, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
+
+        public static DateTime? ToDateTime(this string dateAsString)
+        {
+            if (DateTime.TryParse(dateAsString, out var date))
+            {
+                return date;
+            }
+
+            return null;
+        }
     }
 }

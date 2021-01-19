@@ -6,9 +6,11 @@ namespace Eml.Extensions
     public static class SimpleMapper
     {
         /// <summary>
-        /// Map properties from Entity to Dto. Do not use this to process entities from large lists due to performance penalties.
+        /// Map common properties between types. destination is ByRef.
+        /// <para>Do not use this to process large lists due to performance penalties.</para>
+        /// <para>Sample: sourceEntity.MapTo(ref destinationEntity);</para>
         /// </summary>
-        public static T1 MapTo<T, T1>(this T source, T1 destination)
+        public static void MapTo<T, T1>(this T source, ref T1 destination, bool suppressErrors = true)
             where T : class
             where T1 : class
         {
@@ -25,12 +27,14 @@ namespace Eml.Extensions
                 {
                     destinationProperty.SetValue(destination, sourceProperty.GetValue(source, null), null);
                 }
-                catch (ArgumentException)
+                catch (Exception)
                 {
+                    if (!suppressErrors)
+                    {
+                        throw;
+                    }
                 }
             }
-
-            return destination;
         }
     }
 }

@@ -7,13 +7,10 @@ namespace Eml.Extensions
         /// <summary>
         /// Throws an ArgumentNullException if value is null.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <param name="parameterName"></param>
         /// <returns></returns>
-        public static T CheckNotNull<T>(this T value, string parameterName)
+        public static T CheckNotNull<T>(this T value)
         {
-            if (value == null) throw new ArgumentNullException(parameterName);
+            if (value == null) throw new ArgumentNullException(nameof(value));
 
             return value;
         }

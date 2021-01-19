@@ -12,16 +12,16 @@ namespace Eml.Extensions
 
     public class LambdaComparer<T> : IComparer<T>
     {
-        private readonly Func<T, T, int> _lambdaComparer;
+        private readonly Func<T, T, int> lambdaComparer;
 
         public LambdaComparer(Func<T, T, int> lambdaComparer)
         {
-            _lambdaComparer = lambdaComparer.CheckNotNull(nameof(lambdaComparer));
+            this.lambdaComparer = lambdaComparer.CheckNotNull();
         }
 
         public int Compare(T x, T y)
         {
-            return _lambdaComparer(x, y);
+            return lambdaComparer(x, y);
         }
     }
 }

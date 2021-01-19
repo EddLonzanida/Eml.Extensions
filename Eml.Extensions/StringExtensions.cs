@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,33 +13,61 @@ namespace Eml.Extensions
         /// <summary>
         /// Case insensitive comparison. Trims both words before comparing.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
         public static bool IsEqualTo(this string source, string value)
         {
             return string.Equals(source.Trim(), value.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
+        /// Shorthand for string.IsNullOrWhiteSpace
+        /// </summary>
+        public static bool IsNullOrWhiteSpace(this string source)
+        {
+            return string.IsNullOrWhiteSpace(source);
+        }
+
+        /// <summary>
         /// Removes the trimValue before comparing. Case insensitive comparison.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="value"></param>
-        /// <param name="trimValue"></param>
-        /// <returns></returns>
         public static bool IsEqualTo(this string source, string value, string trimValue)
         {
             return source.Replace(trimValue, string.Empty).IsEqualTo(value.Replace(trimValue, string.Empty));
         }
 
         /// <summary>
+        /// Case insensitive comparison.
+        /// </summary>
+        public static bool IsWithStart(this string source, string value)
+        {
+            return source.StartsWith(value, true, null);
+        }
+
+        /// <summary>
+        /// Case insensitive comparison.
+        /// </summary>
+        public static bool IsContains(this string source, string value)
+        {
+            if (value.IsNullOrWhiteSpace())
+            {
+                return source.IsNullOrWhiteSpace();
+            }
+
+            return source.Contains(value, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Find and replace using regexPattern.
+        /// </summary>
+        public static string FindReplaceUsingRegEx(this string body, string regexPattern, string value)
+        {
+            body = Regex.Replace(body, regexPattern, value);
+
+            return body;
+        }
+
+        /// <summary>
         /// Creates a KeyValuePair.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
         public static KeyValuePair<string, T> KeyValuePair<T>(this string key, T value)
         {
             return new KeyValuePair<string, T>(key, value);
@@ -46,8 +76,6 @@ namespace Eml.Extensions
         /// <summary>
         ///     Lowercase the first letter.
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static string LowercaseFirst(this string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return string.Empty;
@@ -62,8 +90,6 @@ namespace Eml.Extensions
         /// <summary>
         ///     Uppercase the first letter.
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
         public static string UppercaseFirst(this string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return string.Empty;
@@ -75,6 +101,9 @@ namespace Eml.Extensions
             return new string(a);
         }
 
+        /// <summary>
+        /// Capitalize all words using '.' as the default word boundaries.
+        /// </summary>
         public static string ToProperCase(this string s, char delimiter = '.')
         {
             var result = s.ToLower();
@@ -94,8 +123,6 @@ namespace Eml.Extensions
         /// <summary>
         /// Uses capital letter as an indicator.
         /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
         public static string ToSpaceDelimitedWords(this string word)
         {
             var result = Regex.Replace(word, @"\s\s+", " ");
@@ -138,7 +165,7 @@ namespace Eml.Extensions
             if (string.IsNullOrWhiteSpace(word)) return string.Empty;
 
             var a = word.ToCharArray();
-            var lastLetter = a[a.Length - 1];
+            var lastLetter = a[^1];
             var isLower = char.IsLower(lastLetter);
             var append = "";
 
@@ -223,7 +250,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Remove string at the end.
+        /// Remove string at the end. Case insensitive.
         /// </summary>
         public static string TrimRight(this string text, string tail)
         {
@@ -234,11 +261,22 @@ namespace Eml.Extensions
             return text;
         }
 
-       /// <summary>
-       /// Used to create jwt
-       /// </summary>
-       /// <param name="textToEncode"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// Remove string at the start. Case insensitive.
+        /// </summary>
+        public static string TrimLeft(this string text, string head)
+        {
+            var cnt = head.Length;
+            var tmpText = text.Substring(0, cnt);
+
+            return tmpText.IsEqualTo(head) ? text.Substring(cnt) : text;
+        }
+
+        /// <summary>
+        /// Used to create jwt. Encode UTF8.
+        /// </summary>
+        /// <param name="textToEncode"></param>
+        /// <returns></returns>
         public static string Base64Encode(this string textToEncode)
         {
             var textAsBytes = Encoding.UTF8.GetBytes(textToEncode);
@@ -247,17 +285,101 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Used by http helpers. Create Basic authorization token.
+        ///  Decode UTF8.
+        /// </summary>
+        /// <param name="encodedText"></param>
+        /// <returns></returns>
+        public static string Base64Decode(this string encodedText)
+        {
+            var stringAsBytes = Convert.FromBase64String(encodedText);
+            var returnValue = Encoding.UTF8.GetString(stringAsBytes);
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Used by http helpers. Create Basic authorization token. Adds 'Basic ' prefix.
         /// </summary>
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <returns></returns>
         public static string ToBasicAuthenticationEncode(this string userName, string password)
         {
-            var token = $"{userName}:{password}".Base64Encode();
+            var token = userName.ToBase64AuthenticationToken(password);
             var basicAuthentication = $"Basic {token}";
 
             return basicAuthentication;
+        }
+
+        /// <summary>
+        /// Used by http helpers. Create Base64 authorization token using {userName}:{password}. 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public static string ToBase64AuthenticationToken(this string userName, string password)
+        {
+            var token = $"{userName}:{password}".Base64Encode();
+
+            return token;
+        }
+
+        public static string ToStringWithHeaderMessage(this IEnumerable<string> items, string msg)
+        {
+            var enumerable = items.ToArray();
+            var rowCount = enumerable.Length;
+
+            return $"{Environment.NewLine}({rowCount}){msg}: {Environment.NewLine}    {string.Join(Environment.NewLine + "    ", enumerable.ToArray())}{Environment.NewLine}";
+        }
+
+        /// <summary>
+        /// Serialize objects with preferred options:
+        /// <para>NullValueHandling.Ignore</para>
+        /// <para>ReferenceLoopHandling.Ignore</para>
+        /// <para>new CamelCasePropertyNamesContractResolver()</para>
+        /// </summary>
+        public static string Serialize<T>(this T obj)
+        {
+            var options = new JsonSerializerSettings();
+
+            options.SetDefaultOptions();
+
+            var objAsString = JsonConvert.SerializeObject(obj, options);
+
+            return objAsString;
+        }
+
+        /// <summary>
+        /// Apply preferred options:
+        /// <para>NullValueHandling.Ignore</para>
+        /// <para>ReferenceLoopHandling.Ignore</para>
+        /// <para>new CamelCasePropertyNamesContractResolver()</para>
+        /// </summary>
+        public static void SetDefaultOptions(this JsonSerializerSettings options)
+        {
+            options.NullValueHandling = NullValueHandling.Ignore;
+            options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            options.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
+
+        public static string GetSortColumnErrorMessage(this string sortColumn, string enumName)
+        {
+            return $"sortColumn: [{sortColumn}] is not supported. Add this to {enumName}.";
+        }
+
+        /// <summary>
+        /// Combine list of strings using new line. Pass-in tabs or spaces for the prefix.
+        /// </summary>
+        public static string Join(this IEnumerable<string> strings, string prefix = "")
+        {
+            var list = strings.ToList();
+
+            if (!string.IsNullOrWhiteSpace(prefix))
+            {
+                list = list.ConvertAll(r => $"{prefix}{r}");
+            }
+
+            return string.Join($"{Environment.NewLine}", list.ToArray());
         }
     }
 }
