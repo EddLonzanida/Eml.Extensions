@@ -333,7 +333,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Serialize objects with preferred options:
+        /// Serialize objects with preferred options to serialize <typeparamref name="T" />:
         /// <para>NullValueHandling.Ignore</para>
         /// <para>ReferenceLoopHandling.Ignore</para>
         /// <para>new CamelCasePropertyNamesContractResolver()</para>

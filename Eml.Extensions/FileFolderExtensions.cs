@@ -65,7 +65,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// GetBinDirectory using the assembly of T
+        /// GetBinDirectory using the assembly of <typeparamref name="T" />
         /// </summary>
         public static string GetFullPath<T>(this string fn, string relativePath)
         {
@@ -75,7 +75,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// T will be used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// </summary>
         public static async Task<string> GetJsonAsStringAsync<T>(this string jsonFile, string relativePath)
             where T : class
@@ -89,7 +89,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// T will be used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// </summary>
         public static string GetJsonAsString<T>(this string jsonFile, string relativePath)
             where T : class
@@ -104,7 +104,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
         /// </summary>
         public static List<T> GetJsonStubs<T>(this string jsonFile, string relativeFolder)
@@ -118,7 +118,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
         /// </summary>
         public static async Task<List<T>> GetJsonStubsAsync<T>(this string jsonFile, string relativeFolder)
@@ -132,7 +132,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
         /// </summary>
         public static T GetJsonStub<T>(this string jsonFile, string relativeFolder)
@@ -147,7 +147,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
+        /// <typeparamref name="T" /> will be used to get the current directory.
         /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
         /// </summary>
         public static async Task<T> GetJsonStubAsync<T>(this string jsonFile, string relativeFolder)
