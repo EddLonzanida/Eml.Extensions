@@ -74,7 +74,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        ///     Lowercase the first letter.
+        /// Lowercase the first letter.
         /// </summary>
         public static string LowercaseFirst(this string s)
         {
@@ -88,7 +88,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        ///     Uppercase the first letter.
+        /// Uppercase the first letter.
         /// </summary>
         public static string UppercaseFirst(this string s)
         {
