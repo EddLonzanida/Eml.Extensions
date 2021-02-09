@@ -15,6 +15,12 @@ namespace Eml.Extensions
             return string.IsNullOrEmpty(defaultValue) ? string.Empty : defaultValue;
         }
 
+        /// <summary>
+        /// <inheritdoc cref=""/>
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
         public static string ToStringOrDefault(this DateTime? source, string format)
         {
             return ToStringOrDefault(source, format, null);
@@ -30,6 +36,27 @@ namespace Eml.Extensions
             var d = source.ToString("yyyy-MM-dd 23:59:59");
 
             return DateTime.ParseExact(d, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Returns yyyy-MM-dd 11:59:59 PM
+        /// </summary>
+        public static string ToStringBeforeMidnightPm(this DateTime source)
+        {
+            var d = source.ToString("yyyy-MM-dd 11:59:59", CultureInfo.InvariantCulture);
+            var beforeMidNight = $"{d} PM";
+
+            return beforeMidNight;
+        }
+
+        /// <summary>
+        /// Returns military time yyyy-MM-dd 23:59:59
+        /// </summary>
+        public static string ToStringBeforeMidnight(this DateTime source)
+        {
+            var beforeMidNight = source.ToString("yyyy-MM-dd 23:59:59", CultureInfo.InvariantCulture);
+
+            return beforeMidNight;
         }
 
         /// <summary>
