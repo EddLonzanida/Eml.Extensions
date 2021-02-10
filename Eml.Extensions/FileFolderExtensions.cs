@@ -174,7 +174,7 @@ namespace Eml.Extensions
         /// <para>Pass file extension with a dot. Ex: .xml, .txt</para>
         /// <para>The .dll file extension of the assembly will be replaced with the parameter <paramref name="fileExtension"></paramref>.</para>
         /// </summary>
-        public static string GetNewPathFromThisAssembly<T>(this string fileExtension)
+        public static string GetNewPathFromAssemblyOf<T>(this string fileExtension)
             where T : class
         {
             var assembly = typeof(T).Assembly;
