@@ -273,10 +273,8 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Used to create jwt. Encode UTF8.
+        /// Used to create jwt. Encode UTF8.GetBytes.
         /// </summary>
-        /// <param name="textToEncode"></param>
-        /// <returns></returns>
         public static string Base64Encode(this string textToEncode)
         {
             var textAsBytes = Encoding.UTF8.GetBytes(textToEncode);
@@ -285,10 +283,9 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        ///  Decode UTF8.
+        ///  Decode using UTF8.GetString.
+        /// <inheritdoc cref="Convert.FromBase64String"/>
         /// </summary>
-        /// <param name="encodedText"></param>
-        /// <returns></returns>
         public static string Base64Decode(this string encodedText)
         {
             var stringAsBytes = Convert.FromBase64String(encodedText);
@@ -298,11 +295,9 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Used by http helpers. Create Basic authorization token. Adds 'Basic ' prefix.
+        /// <para>Create Basic authorization token. Adds 'Basic ' prefix.</para>
+        /// <inheritdoc cref="ToBase64AuthenticationToken"/>
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
         public static string ToBasicAuthenticationEncode(this string userName, string password)
         {
             var token = userName.ToBase64AuthenticationToken(password);
@@ -312,11 +307,9 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Used by http helpers. Create Base64 authorization token using {userName}:{password}. 
+        /// <para>Create Base64 authorization token using {userName}:{password}.</para>
+        /// <inheritdoc cref="Base64Encode"/>
         /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
         public static string ToBase64AuthenticationToken(this string userName, string password)
         {
             var token = $"{userName}:{password}".Base64Encode();

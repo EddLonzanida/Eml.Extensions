@@ -5,6 +5,9 @@ namespace Eml.Extensions
 {
     public static class DateExtensions
     {
+        /// <summary>
+        /// Format date using the specified format. Returns empty string if date is null.
+        /// </summary>
         private static string ToStringOrDefault(this DateTime? source, string format, string defaultValue)
         {
             if (source != null)
@@ -16,11 +19,8 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// <inheritdoc cref=""/>
+        /// <inheritdoc cref="ToStringOrDefault(DateTime? , string , string)"/>
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="format"></param>
-        /// <returns></returns>
         public static string ToStringOrDefault(this DateTime? source, string format)
         {
             return ToStringOrDefault(source, format, null);
@@ -63,7 +63,6 @@ namespace Eml.Extensions
         /// Returns 23:59:59 
         /// </summary>
         /// <param name="source"></param>
-        /// <returns></returns>
         public static DateTime? ToBeforeMidnight(this DateTime? source)
         {
             if (!source.HasValue)
