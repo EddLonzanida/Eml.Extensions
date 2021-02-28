@@ -33,6 +33,9 @@
     <None Update="EmLNuGet.pfx">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Update="EmLNuGet.snk">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
