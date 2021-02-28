@@ -8,9 +8,9 @@ namespace Eml.Extensions
     public static class LinqExtensions
     {
         /// <summary>
-        /// Remove items from the main list.
-        /// Example:
-        /// <para>return mainList.Except(listToRemove, (x, y) => x.Id == y.Id);</para>
+        /// Remove items from <paramref name="mainList"></paramref>.
+        /// <para>Example:</para>
+        /// <code language="c#">return mainList.Except(listToRemove, (x, y) => x.Id == y.Id);</code>
         /// </summary>
         public static List<TSource> Except<TSource>(this IEnumerable<TSource> mainList,
             IEnumerable<TSource> listToRemove, Func<TSource, TSource, bool> comparer)
@@ -19,8 +19,9 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Merge two lists. Example:
-        /// <para>return mainList.Intersect(listToRemove, (x, y) => x.Id == y.Id);</para>
+        /// Merge two lists.
+        /// <para>Example:</para>
+        /// <code language="c#">return mainList.Except(listToRemove, (x, y) => x.Id == y.Id);</code>
         /// </summary>
         public static List<TSource> Merge<TSource>(this IEnumerable<TSource> mainList,
             IEnumerable<TSource> listToMerge, Func<TSource, TSource, bool> comparer)

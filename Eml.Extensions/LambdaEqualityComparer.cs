@@ -7,7 +7,6 @@ namespace Eml.Extensions
     /// Used by LinqExtensions.
     /// General purpose IEqualityComparer.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public class LambdaEqualityComparer<T> : IEqualityComparer<T>
     {
         private readonly Func<T, T, bool> lambdaComparer;

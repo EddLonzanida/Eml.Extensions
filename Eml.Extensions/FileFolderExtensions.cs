@@ -65,7 +65,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// GetBinDirectory using the assembly of T
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fn"></paramref>.</para>
         /// </summary>
         public static string GetFullPath<T>(this string fn, string relativePath)
         {
@@ -75,7 +75,10 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// T will be used to get the current directory.
+        /// Deserialize json files for Seeding purposes.
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static async Task<string> GetJsonAsStringAsync<T>(this string jsonFile, string relativePath)
             where T : class
@@ -89,7 +92,10 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// T will be used to get the current directory.
+        /// Deserialize json files for Seeding purposes.
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static string GetJsonAsString<T>(this string jsonFile, string relativePath)
             where T : class
@@ -104,8 +110,9 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
-        /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static List<T> GetJsonStubs<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -118,8 +125,9 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
-        /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static async Task<List<T>> GetJsonStubsAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -132,8 +140,9 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
-        /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static T GetJsonStub<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -147,8 +156,9 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// T is also used to get the current directory.
-        /// Ex: private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
         /// </summary>
         public static async Task<T> GetJsonStubAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -157,6 +167,23 @@ namespace Eml.Extensions
             var initialData = JsonConvert.DeserializeObject<T>(jsonText);
 
             return initialData;
+        }
+
+        /// <summary>
+        /// Generate the full path from the assembly of <typeparamref name="T" />.
+        /// <para>Pass file extension with a dot. Ex: .xml, .txt</para>
+        /// <para>The .dll file extension of the assembly will be replaced with the parameter <paramref name="fileExtension"></paramref>.</para>
+        /// </summary>
+        public static string GetNewPathFromAssemblyOf<T>(this string fileExtension)
+            where T : class
+        {
+            var assembly = typeof(T).Assembly;
+            var assemblyName = typeof(T).Assembly.GetName().Name;
+            var binDirectory = Path.GetDirectoryName(assembly.Location) ?? string.Empty;
+            var xmlFile = $"{assemblyName}{fileExtension}";
+            var xmlPath = Path.Combine(binDirectory, xmlFile);
+
+            return xmlPath;
         }
     }
 }
