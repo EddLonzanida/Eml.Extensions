@@ -201,6 +201,18 @@ namespace Eml.Extensions
                 .ToList();
         }
 
+        public static List<Type> GetInterfaces(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
+        {
+            return assemblies.SelectMany(assembly => assembly.GetInterfaces(whereClause))
+                .ToList();
+        }
+
+        public static List<Type> GetInterfaces(this IEnumerable<Assembly> assemblies)
+        {
+            return assemblies.SelectMany(assembly => assembly.GetInterfaces())
+                .ToList();
+        }
+
         public static List<Type> GetInterfaces(this Assembly assembly, Func<Type, bool> whereClause)
         {
             return assembly.GetTypes(type => type.IsInterface && whereClause(type));
@@ -261,6 +273,23 @@ namespace Eml.Extensions
                     typeof(TimeSpan),
                     typeof(Guid)
                 }.Contains(type) ;
+        }
+
+        public static List<Type> GetStaticClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
+        {
+            return assemblies.SelectMany(assembly => assembly.GetTypes(type => whereClause(type) 
+                                                                               && type.IsClass 
+                                                                               && type.IsSealed
+                                                                               && type.IsAbstract))
+                .ToList();
+        }
+
+        public static List<Type> GetStaticClasses(this IEnumerable<Assembly> assemblies)
+        {
+            return assemblies.SelectMany(assembly => assembly.GetTypes(type => type.IsClass
+                                                                               && type.IsSealed
+                                                                               && type.IsAbstract))
+                .ToList();
         }
     }
 }
