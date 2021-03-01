@@ -10,7 +10,7 @@
     <Company>EmL Solutions</Company>
     <PackageTags>EmL Extensions</PackageTags>
     <NoWarn>1701;1702;1705;CS1591</NoWarn>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(SolutionName).xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -33,9 +33,12 @@
     <None Update="EmLNuGet.pfx">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Update="EmLNuGet.snk">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /f EmLNuGet.pfx /p &quot;^TJf2kw#n2L5yQ&quot; /fd SHA256 &quot;$(TargetDir)\Eml.Extensions.dll&quot;" />
+    <Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /f EmLNuGet.pfx /p &quot;^TJf2kw#n2L5yQ&quot; /fd SHA256 &quot;$(TargetDir)\$(TargetFileName)&quot;" />
   </Target>
 </Project>
