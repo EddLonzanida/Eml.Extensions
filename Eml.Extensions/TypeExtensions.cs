@@ -272,13 +272,13 @@ namespace Eml.Extensions
                     typeof(DateTimeOffset),
                     typeof(TimeSpan),
                     typeof(Guid)
-                }.Contains(type) ;
+                }.Contains(type);
         }
 
         public static List<Type> GetStaticClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
         {
-            return assemblies.SelectMany(assembly => assembly.GetTypes(type => whereClause(type) 
-                                                                               && type.IsClass 
+            return assemblies.SelectMany(assembly => assembly.GetTypes(type => whereClause(type)
+                                                                               && type.IsClass
                                                                                && type.IsSealed
                                                                                && type.IsAbstract))
                 .ToList();
