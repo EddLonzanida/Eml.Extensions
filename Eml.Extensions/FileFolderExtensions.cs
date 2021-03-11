@@ -65,13 +65,13 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fn"></paramref>.</para>
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
         /// </summary>
-        public static string GetFullPath<T>(this string fn, string relativePath)
+        public static string GetFullPath<T>(this string fileName, string relativePath)
         {
             var binDirectory = TypeExtensions.GetBinDirectory<T>();
 
-            return Path.Combine(binDirectory, relativePath, fn);
+            return Path.Combine(binDirectory, relativePath, fileName);
         }
 
         /// <summary>
@@ -85,8 +85,7 @@ namespace Eml.Extensions
         {
             jsonFile = jsonFile.TrimRight(".json");
 
-            var fullPath = $"{jsonFile}.json".GetFullPath<T>(relativePath);
-            var jsonText = await fullPath.GetFileContentsStringAsync();
+            var jsonText = await $"{jsonFile}.json".GetFileContentsAsStringAsync<T>(relativePath);
 
             return jsonText;
         }
@@ -102,8 +101,7 @@ namespace Eml.Extensions
         {
             jsonFile = jsonFile.TrimRight(".json");
 
-            var fullPath = $"{jsonFile}.json".GetFullPath<T>(relativePath);
-            var jsonText = fullPath.GetFileContentsString();
+            var jsonText = $"{jsonFile}.json".GetFileContentsAsString<T>(relativePath);
 
             return jsonText;
         }
@@ -123,14 +121,14 @@ namespace Eml.Extensions
             return initialData;
         }
 
-        public static async Task<string> GetFileContentsStringAsync(this string fullPath)
+        public static async Task<string> GetFileContentsAsStringAsync(this string fullPath)
         {
             var jsonText = await File.ReadAllTextAsync(fullPath);
 
             return jsonText;
         }
 
-        public static string GetFileContentsString(this string fullPath)
+        public static string GetFileContentsAsString(this string fullPath)
         {
             var jsonText = File.ReadAllText(fullPath);
 
@@ -140,11 +138,37 @@ namespace Eml.Extensions
         /// <summary>
         /// Uses the current directory to get the full path.
         /// </summary>
-        public static async Task<string> GetFileContentsStringAsync(this string fileName, string relativeFolder)
+        public static async Task<string> GetFileContentsAsStringAsync(this string fileName, string relativeFolder)
         {
             var currentDirectory = Directory.GetCurrentDirectory();
             var fullPath = Path.Combine(currentDirectory, relativeFolder, fileName);
-            var jsonText = await fullPath.GetFileContentsStringAsync();
+            var jsonText = await fullPath.GetFileContentsAsStringAsync();
+
+            return jsonText;
+        }
+
+        /// <summary>
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER = "Stubs";</code>
+        /// </summary>
+        public static async Task<string> GetFileContentsAsStringAsync<T>(this string fileName, string relativeFolder)
+        {
+            var fullPath = fileName.GetFullPath<T>(relativeFolder);
+            var jsonText = await fullPath.GetFileContentsAsStringAsync();
+
+            return jsonText;
+        }
+
+        /// <summary>
+        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">private const string RELATIVE_FOLDER = "Stubs";</code>
+        /// </summary>
+        public static string GetFileContentsAsString<T>(this string fileName, string relativeFolder)
+        {
+            var fullPath = fileName.GetFullPath<T>(relativeFolder);
+            var jsonText = fullPath.GetFileContentsAsString();
 
             return jsonText;
         }
