@@ -29,8 +29,6 @@ namespace Eml.Extensions
         /// <summary>
         /// Returns 23:59:59 
         /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
         public static DateTime ToBeforeMidnight(this DateTime source)
         {
             var d = source.ToString("yyyy-MM-dd 23:59:59");
@@ -62,7 +60,6 @@ namespace Eml.Extensions
         /// <summary>
         /// Returns 23:59:59 
         /// </summary>
-        /// <param name="source"></param>
         public static DateTime? ToBeforeMidnight(this DateTime? source)
         {
             if (!source.HasValue)
@@ -75,6 +72,9 @@ namespace Eml.Extensions
             return DateTime.ParseExact(d, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// DateTime.TryParse(dateAsString, out var date) 
+        /// </summary>
         public static DateTime? ToDateTime(this string dateAsString)
         {
             if (DateTime.TryParse(dateAsString, out var date))

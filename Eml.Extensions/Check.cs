@@ -5,9 +5,8 @@ namespace Eml.Extensions
     public static class Check
     {
         /// <summary>
-        /// Throws an ArgumentNullException if value is null.
+        /// Throws an ArgumentNullException if <paramref name="value"/> is null.
         /// </summary>
-        /// <returns></returns>
         public static T CheckNotNull<T>(this T value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
@@ -16,11 +15,8 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Throws an ArgumentNullException if string is null.
+        /// Throws an ArgumentNullException if <paramref name="value"/> is null, empty or whitespace.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="parameterName"></param>
-        /// <returns></returns>
         public static string CheckNotEmpty(this string value, string parameterName)
         {
             if (string.IsNullOrWhiteSpace(value))
