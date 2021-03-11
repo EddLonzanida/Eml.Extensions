@@ -10,7 +10,7 @@
     <Company>EmL Solutions</Company>
     <PackageTags>EmL Extensions</PackageTags>
     <NoWarn>1701;1702;1705;CS1591</NoWarn>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(SolutionName).xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 

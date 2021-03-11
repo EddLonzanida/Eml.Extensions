@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Eml.Extensions
 {
@@ -86,7 +86,7 @@ namespace Eml.Extensions
             jsonFile = jsonFile.TrimRight(".json");
 
             var fullPath = $"{jsonFile}.json".GetFullPath<T>(relativePath);
-            var jsonText = await File.ReadAllTextAsync(fullPath);
+            var jsonText = await fullPath.GetFileContentsStringAsync();
 
             return jsonText;
         }
@@ -103,7 +103,7 @@ namespace Eml.Extensions
             jsonFile = jsonFile.TrimRight(".json");
 
             var fullPath = $"{jsonFile}.json".GetFullPath<T>(relativePath);
-            var jsonText = File.ReadAllText(fullPath);
+            var jsonText = fullPath.GetFileContentsString();
 
             return jsonText;
         }
@@ -121,6 +121,32 @@ namespace Eml.Extensions
             var initialData = JsonConvert.DeserializeObject<List<T>>(jsonText);
 
             return initialData;
+        }
+
+        public static async Task<string> GetFileContentsStringAsync(this string fullPath)
+        {
+            var jsonText = await File.ReadAllTextAsync(fullPath);
+
+            return jsonText;
+        }
+
+        public static string GetFileContentsString(this string fullPath)
+        {
+            var jsonText = File.ReadAllText(fullPath);
+
+            return jsonText;
+        }
+
+        /// <summary>
+        /// Uses the current directory to get the full path.
+        /// </summary>
+        public static async Task<string> GetFileContentsStringAsync(this string fileName, string relativeFolder)
+        {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var fullPath = Path.Combine(currentDirectory, relativeFolder, fileName);
+            var jsonText = await fullPath.GetFileContentsStringAsync();
+
+            return jsonText;
         }
 
         /// <summary>
