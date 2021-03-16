@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Eml.Extensions
 {
+
     public static class FileFolderExtensions
     {
         /// <summary>
