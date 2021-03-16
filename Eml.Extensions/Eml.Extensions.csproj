@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFramework>net5.0</TargetFramework>
     <Description>Collection of useful Extensions gathered along the way.</Description>
     <Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
     <PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
