@@ -19,14 +19,14 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Merge two lists.
+        /// Returns the intersection of 2 lists.
         /// <para>Example:</para>
-        /// <code language="c#">return mainList.Except(listToRemove, (x, y) => x.Id == y.Id);</code>
+        /// <code language="c#">return mainList.Intersect(listToRemove, (x, y) => x.Id == y.Id);</code>
         /// </summary>
-        public static List<TSource> Merge<TSource>(this IEnumerable<TSource> mainList,
-            IEnumerable<TSource> listToMerge, Func<TSource, TSource, bool> comparer)
+        public static List<TSource> Intersect<TSource>(this IEnumerable<TSource> mainList,
+            IEnumerable<TSource> listToIntersect, Func<TSource, TSource, bool> comparer)
         {
-            return mainList.Intersect(listToMerge, new LambdaEqualityComparer<TSource>(comparer)).ToList();
+            return mainList.Intersect(listToIntersect, new LambdaEqualityComparer<TSource>(comparer)).ToList();
         }
 
         /// <summary>
