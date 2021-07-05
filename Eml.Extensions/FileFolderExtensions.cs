@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Eml.Extensions
 {
-
     public static class FileFolderExtensions
     {
         /// <summary>
@@ -67,6 +67,11 @@ namespace Eml.Extensions
 
         /// <summary>
         /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
+        /// <para>Pass an empty <paramref name="relativePath"/> to use the current directory.</para>
+        /// <para>Example:</para>
+        /// <code language="c#">
+        /// <para>private const string RELATIVE_FOLDER = "Stubs";</para> 
+        /// </code>
         /// </summary>
         public static string GetFullPath<T>(this string fileName, string relativePath)
         {
@@ -76,10 +81,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
         public static async Task<string> GetJsonAsStringAsync<T>(this string jsonFile, string relativePath)
             where T : class
@@ -92,10 +94,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
         public static string GetJsonAsString<T>(this string jsonFile, string relativePath)
             where T : class
@@ -108,10 +107,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
         public static List<T> GetJsonStubs<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -149,9 +145,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER = "Stubs";</code>
+        /// <inheritdoc cref="GetFullPath{T}(string,string)"/>
         /// </summary>
         public static async Task<string> GetFileContentsAsStringAsync<T>(this string fileName, string relativeFolder)
         {
@@ -162,9 +156,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="fileName"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER = "Stubs";</code>
+        /// <inheritdoc cref="GetFullPath{T}(string,string)"/>
         /// </summary>
         public static string GetFileContentsAsString<T>(this string fileName, string relativeFolder)
         {
@@ -175,10 +167,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
         public static async Task<List<T>> GetJsonStubsAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -191,9 +180,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// <inheritdoc cref="GetFullPath{T}(string,string)"/>
         /// </summary>
         public static T GetJsonStub<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -207,9 +194,19 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Deserialize json files for Seeding purposes.
-        /// <para><typeparamref name="T" /> will be used to get the current directory of <paramref name="jsonFile"></paramref>.</para>
-        /// <para>Example:</para>
-        /// <code language="c#">private const string RELATIVE_FOLDER_DATA_SOURCES = @"TestArtifacts\Migrations\SeedDataSources";</code>
+        /// </summary>
+        public static T GetJsonStubFromFullPath<T>(this string fullPath)
+            where T : class
+        {
+            var jsonText = fullPath.GetFileContentsAsString();
+
+            var initialData = JsonConvert.DeserializeObject<T>(jsonText);
+
+            return initialData;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
         public static async Task<T> GetJsonStubAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
@@ -218,6 +215,18 @@ namespace Eml.Extensions
             var initialData = JsonConvert.DeserializeObject<T>(jsonText);
 
             return initialData;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
+        /// </summary>
+        public static async Task<T> GetJsonStubFromListAsync<T>(this string jsonFile, string relativeFolder)
+            where T : class
+        {
+            var jsonText = await jsonFile.GetJsonAsStringAsync<T>(relativeFolder);
+            var initialData = JsonConvert.DeserializeObject<List<T>>(jsonText);
+
+            return initialData?.FirstOrDefault();
         }
 
         /// <summary>
