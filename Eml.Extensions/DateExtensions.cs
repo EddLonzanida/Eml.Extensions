@@ -84,5 +84,20 @@ namespace Eml.Extensions
 
             return null;
         }
+
+        public static DateTime? ToDateTime(this string dateAsString, string format)
+        {
+            if (dateAsString.IsNullOrWhiteSpace())
+            {
+                return null;
+            }
+
+            if (DateTime.TryParse(dateAsString, out var date))
+            {
+                return date;
+            }
+
+            return DateTime.ParseExact(dateAsString ?? string.Empty, format, CultureInfo.InvariantCulture);
+        }
     }
 }
