@@ -242,11 +242,12 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Get the last n characters of a string.
+        /// <para>Get the last n characters of a string.</para>
+        /// Will always return the number of characters specified in <paramref name="charCount"/>.
         /// </summary>
-        public static string GetLast(this string text, int charCount)
+        public static string Right(this string text, int charCount)
         {
-            return charCount >= text.Length ? text : text.Substring(text.Length - charCount);
+            return charCount >= text.Length ? text : text[^charCount..];
         }
 
         /// <summary>
@@ -256,7 +257,7 @@ namespace Eml.Extensions
         {
             var index = text.IndexOf(tail, StringComparison.CurrentCultureIgnoreCase);
 
-            if (index > 0) text = text.Substring(0, index);
+            if (index > 0) text = text[..index];
 
             return text;
         }
@@ -267,9 +268,9 @@ namespace Eml.Extensions
         public static string TrimLeft(this string text, string head)
         {
             var cnt = head.Length;
-            var tmpText = text.Substring(0, cnt);
+            var tmpText = text[..cnt];
 
-            return tmpText.IsEqualTo(head) ? text.Substring(cnt) : text;
+            return tmpText.IsEqualTo(head) ? text[cnt..] : text;
         }
 
         /// <summary>
