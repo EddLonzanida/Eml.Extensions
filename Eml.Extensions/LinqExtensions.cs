@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Eml.Extensions
 {
@@ -108,6 +109,47 @@ namespace Eml.Extensions
             var firstOrDefault = results.FirstOrDefault();
 
             return firstOrDefault;
+        }
+
+        /// <summary>
+        /// Safely performs while loop. Used when deleting items from a mutable list.
+        /// <para>Uses <paramref name="items"/>.Count to break the loop.</para>
+        /// </summary>
+        public static void While<T>(this List<T> items, Action<T> action)
+        {
+            var initialCount = items.Count;
+            var ctr = initialCount - 1;
+
+            if (initialCount <= 0) return;
+
+            while (items.Count > 0 && ctr <= initialCount)
+            {
+                var item = items[0];
+
+                action(item);
+
+                ctr++;
+            }
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="While{T}"/>
+        /// </summary>
+        public static async Task WhileAsync<T>(this List<T> items, Func<T, Task> action)
+        {
+            var initialCount = items.Count;
+            var ctr = initialCount - 1;
+
+            if (initialCount <= 0) return;
+
+            while (items.Count > 0 && ctr <= initialCount)
+            {
+                var item = items[0];
+
+                await action(item);
+
+                ctr++;
+            }
         }
     }
 }

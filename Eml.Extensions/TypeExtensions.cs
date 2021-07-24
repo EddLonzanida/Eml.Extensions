@@ -114,6 +114,52 @@ namespace Eml.Extensions
             return properties.ToList();
         }
 
+        /// <summary>
+        /// Get all public properties except concrete classes.
+        /// </summary>
+        public static List<PropertyInfo> GetPublicNativeTypeProperties(this Type type)
+        {
+            var properties = type.GetPublicProperties();
+
+            return properties.Where(x => Convert.GetTypeCode(x) != TypeCode.Object)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Uses reflection to compare <paramref name="type1"/> and <paramref name="type2"/>.
+        /// </summary>
+        public static bool HasChanges<T>(this T type1, T type2, List<string> exceptProperties = null)
+            where T : class
+        {
+            var type1Properties = type1.GetType().GetPublicNativeTypeProperties();
+            var hasChanges = type1Properties.Any(x =>
+            {
+                try
+                {
+                    if (exceptProperties != null && exceptProperties.Contains(x.Name))
+                    {
+                        return false;
+                    }
+
+                    var t1Value = x.GetValue(type1, null);
+                    var t2Value = x.GetValue(type2, null);
+
+                    if (t1Value == null)
+                    {
+                        return t2Value != null;
+                    }
+
+                    return !(t1Value?.Equals(t2Value) ?? false);
+                }
+                catch (Exception)
+                {
+                    return true;
+                }
+            });
+
+            return hasChanges;
+        }
+
         public static List<string> GetPropertyNames(this Type type)
         {
             var properties = type.GetPublicProperties();
