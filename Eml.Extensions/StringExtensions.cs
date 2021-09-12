@@ -332,26 +332,36 @@ namespace Eml.Extensions
         /// <para>ReferenceLoopHandling.Ignore</para>
         /// <para>new CamelCasePropertyNamesContractResolver()</para>
         /// </summary>
-        public static string Serialize<T>(this T obj)
+        public static string Serialize<T>(this T obj, bool showNullValues = false)
         {
             var options = new JsonSerializerSettings();
 
-            options.SetDefaultOptions();
+            options.SetDefaultOptions(showNullValues);
 
-            var objAsString = JsonConvert.SerializeObject(obj, options);
+            var objAsString = obj == null ? string.Empty : JsonConvert.SerializeObject(obj, options);
 
             return objAsString;
         }
 
         /// <summary>
         /// Apply preferred options:
-        /// <para>NullValueHandling.Ignore</para>
-        /// <para>ReferenceLoopHandling.Ignore</para>
-        /// <para>new CamelCasePropertyNamesContractResolver()</para>
+        /// <para><see cref="NullValueHandling.Ignore"/></para>
+        /// <para><see cref="ReferenceLoopHandling.Ignore"/></para>
+        /// <para><see cref="Formatting.Indented"/></para>
+        /// <code>new <see cref="CamelCasePropertyNamesContractResolver"/>()</code>
         /// </summary>
-        public static void SetDefaultOptions(this JsonSerializerSettings options)
+        public static void SetDefaultOptions(this JsonSerializerSettings options, bool showNullValues = false, bool indented = true)
         {
-            options.NullValueHandling = NullValueHandling.Ignore;
+            if (!showNullValues)
+            {
+                options.NullValueHandling = NullValueHandling.Ignore;
+            }
+
+            if (indented)
+            {
+                options.Formatting = Formatting.Indented;
+            }
+
             options.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             options.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
