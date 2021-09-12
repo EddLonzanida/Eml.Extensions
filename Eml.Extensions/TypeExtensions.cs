@@ -115,49 +115,72 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Get all public properties except concrete classes.
+        /// Get all public properties except complex types.
         /// </summary>
         public static List<PropertyInfo> GetPublicNativeTypeProperties(this Type type)
         {
             var properties = type.GetPublicProperties();
+            var items = properties
+                .Where(x =>
+                {
+                    var getMethod = x.GetMethod;
 
-            return properties.Where(x => Convert.GetTypeCode(x) != TypeCode.Object)
+                    if (getMethod == null) return false;
+
+                    var getMethodAsString = getMethod.ToString() ?? string.Empty;
+                    var getMethodReturnTypeAsString = getMethod.ReturnType.FullName ?? string.Empty;
+
+                    return (getMethodAsString.StartsWith("System") || getMethodReturnTypeAsString.StartsWith("System"))
+                           && !getMethod.ReturnType.Name.StartsWith("List");
+                })
                 .ToList();
+
+            return items;
         }
 
         /// <summary>
-        /// Uses reflection to compare <paramref name="type1"/> and <paramref name="type2"/>.
+        /// <para>
+        ///     Checks if <paramref name="type1"/> and <paramref name="type2"/> is equal by iterating through all their properties using reflection.
+        ///     Only native type properties are compared.
+        /// </para>
+        /// <para>Native types are determined if the name or namespace starts with "System".</para>
+        /// <para>Complex type properties such as another class, Lists, etc., will be ignored.</para>
         /// </summary>
-        public static bool HasChanges<T>(this T type1, T type2, List<string> exceptProperties = null)
+        public static List<HasChangesDto> HasChanges<T>(this T type1, T type2, List<string> exceptProperties = null)
             where T : class
         {
-            var type1Properties = type1.GetType().GetPublicNativeTypeProperties();
-            var hasChanges = type1Properties.Any(x =>
-            {
-                try
-                {
-                    if (exceptProperties != null && exceptProperties.Contains(x.Name))
-                    {
-                        return false;
-                    }
+            exceptProperties ??= new List<string>();
 
+            var type1Properties = type1.GetType().GetPublicNativeTypeProperties()
+                .Where(x => !exceptProperties.Contains(x.Name))
+                .ToList();
+
+            var changes = type1Properties.ConvertAll(x =>
+                {
                     var t1Value = x.GetValue(type1, null);
                     var t2Value = x.GetValue(type2, null);
+                    var isEqual = true;
 
                     if (t1Value == null)
                     {
-                        return t2Value != null;
+                        isEqual = t2Value == null;
+                    }
+                    else
+                    {
+                        isEqual = t1Value.Equals(t2Value);
                     }
 
-                    return !(t1Value?.Equals(t2Value) ?? false);
-                }
-                catch (Exception)
-                {
-                    return true;
-                }
-            });
+                    if (!isEqual)
+                    {
+                        return new HasChangesDto { PropertyName = x.Name, Value1 = t1Value, Value2 = t2Value };
+                    }
 
-            return hasChanges;
+                    return null;
+                })
+                .Where(x => x != null)
+                .ToList();
+
+            return changes;
         }
 
         public static List<string> GetPropertyNames(this Type type)

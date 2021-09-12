@@ -5,6 +5,8 @@ namespace Eml.Extensions
 {
     public static class DateExtensions
     {
+        private const string STANDARD_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
         /// <summary>
         /// Format date using the specified format. Returns empty string if date is null.
         /// </summary>
@@ -33,7 +35,7 @@ namespace Eml.Extensions
         {
             var d = source.ToString("yyyy-MM-dd 23:59:59");
 
-            return DateTime.ParseExact(d, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(d, STANDARD_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace Eml.Extensions
 
             var d = source?.ToString("yyyy-MM-dd 23:59:59");
 
-            return DateTime.ParseExact(d, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(d, STANDARD_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -98,6 +100,35 @@ namespace Eml.Extensions
             }
 
             return DateTime.ParseExact(dateAsString ?? string.Empty, format, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Compare <paramref name="date1"/> with <paramref name="date2"/>.
+        /// <inheritdoc cref="ToComparableDateTime"/>
+        /// </summary>
+        public static bool IsEqualTo(this DateTime date1, DateTime date2, int decimalPlaces = 2)
+        {
+            var formattedDate1 = date1.ToComparableDateTime(decimalPlaces);
+            var formattedDate2 = date2.ToComparableDateTime(decimalPlaces);
+            var isEqual = formattedDate1 == formattedDate2;
+
+            return isEqual;
+        }
+
+        /// <summary>
+        /// <para>Round off the milliseconds before comparing.</para>
+        /// <para>This is a workaround because the 'fff' date format simply truncates the milliseconds and does not perform rounding off.</para>
+        /// </summary>
+        public static string ToComparableDateTime(this DateTime date1, int decimalPlaces = 2)
+        {
+            var ms = new string('F', decimalPlaces + 1);
+            var ms1 = decimal.Parse($"0.{date1.ToString(ms)}") // truncate milliseconds to decimalPlaces + 1
+                .ToString($"F{decimalPlaces}")  // round off
+                .Replace("0.", string.Empty);   // remove decimal points
+            var dt1 = date1.ToString(STANDARD_DATE_TIME_FORMAT);
+            var formattedDate1 = $"{dt1}.{ms1}";
+
+            return formattedDate1;
         }
     }
 }
