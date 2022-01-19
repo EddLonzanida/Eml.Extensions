@@ -327,10 +327,21 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Serialize objects with preferred options to serialize <typeparamref name="T" />:
-        /// <para>NullValueHandling.Ignore</para>
-        /// <para>ReferenceLoopHandling.Ignore</para>
-        /// <para>new CamelCasePropertyNamesContractResolver()</para>
+        /// Serialize <typeparamref name="T" /> with the following options:
+        ///<list type="bullet">
+        /// <item>
+        ///     <description><see cref="NullValueHandling.Ignore"/></description>
+        /// </item>
+        /// <item>
+        ///     <description><see cref="ReferenceLoopHandling.Ignore"/></description>
+        /// </item>
+        /// <item>
+        ///     <description><see cref="Formatting.Indented"/></description>
+        /// </item>
+        /// <item>
+        ///     <description><code>new <see cref="CamelCasePropertyNamesContractResolver"/>()</code></description>
+        /// </item>
+        ///</list>
         /// </summary>
         public static string Serialize<T>(this T obj, bool showNullValues = false)
         {
@@ -344,7 +355,7 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// Apply preferred options:
+        /// Set default options to:
         /// <para><see cref="NullValueHandling.Ignore"/></para>
         /// <para><see cref="ReferenceLoopHandling.Ignore"/></para>
         /// <para><see cref="Formatting.Indented"/></para>
