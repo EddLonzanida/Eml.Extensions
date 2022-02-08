@@ -15,7 +15,7 @@ namespace Eml.Extensions
         /// </summary>
         public static bool IsEqualTo(this string source, string value)
         {
-            return string.Equals(source.Trim(), value.Trim(), StringComparison.CurrentCultureIgnoreCase);
+            return string.Equals(source?.Trim(), value?.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
@@ -31,7 +31,8 @@ namespace Eml.Extensions
         /// </summary>
         public static bool IsEqualTo(this string source, string value, string trimValue)
         {
-            return source.Replace(trimValue, string.Empty).IsEqualTo(value.Replace(trimValue, string.Empty));
+            return source?.Replace(trimValue, string.Empty)
+                .IsEqualTo(value?.Replace(trimValue, string.Empty)) ?? false;
         }
 
         /// <summary>
@@ -39,7 +40,7 @@ namespace Eml.Extensions
         /// </summary>
         public static bool IsWithStart(this string source, string value)
         {
-            return source.StartsWith(value, true, null);
+            return source?.StartsWith(value, true, null) ?? false;
         }
 
         /// <summary>
@@ -65,12 +66,32 @@ namespace Eml.Extensions
             return body;
         }
 
+        public static string FindReplaceUsingRegEx(this string body, List<string> regexPatterns, string value)
+        {
+            if (regexPatterns == null)
+            {
+                return body;
+            }
+
+            if (!regexPatterns.Any())
+            {
+                return body;
+            }
+
+            foreach (var regEx in regexPatterns)
+            {
+                body = Regex.Replace(body, regEx, value);
+            }
+
+            return body;
+        }
+
         /// <summary>
         /// Creates a KeyValuePair.
         /// </summary>
         public static KeyValuePair<string, T> KeyValuePair<T>(this string key, T value)
         {
-            return new KeyValuePair<string, T>(key, value);
+            return new(key, value);
         }
 
         /// <summary>
@@ -111,8 +132,13 @@ namespace Eml.Extensions
 
             aWords.AddRange(result.Split(delimiter));
 
-            if (aWords.Count < 1) return s;
-            if (aWords.Count == 1) return result.UppercaseFirst();
+            switch (aWords.Count)
+            {
+                case < 1:
+                    return s;
+                case 1:
+                    return result.UppercaseFirst();
+            }
 
             aWords = aWords.ConvertAll(UppercaseFirst);
             result = string.Join(delimiter.ToString(), aWords.ToArray());
@@ -150,7 +176,7 @@ namespace Eml.Extensions
 
                 if (oValue == null) continue;
 
-                var propertyValue = oValue.ToString().Trim();
+                var propertyValue = oValue.ToString()?.Trim();
 
                 p.SetValue(objInstance, propertyValue);
             }
@@ -167,7 +193,7 @@ namespace Eml.Extensions
             var a = word.ToCharArray();
             var lastLetter = a[^1];
             var isLower = char.IsLower(lastLetter);
-            var append = "";
+            string append;
 
             var exceptions = new Dictionary<string, string> {
                 { "man", "men" },
@@ -242,12 +268,25 @@ namespace Eml.Extensions
         }
 
         /// <summary>
-        /// <para>Get the last n characters of a string.</para>
-        /// Will always return the number of characters specified in <paramref name="charCount"/>.
+        /// Get the last <paramref name="charCount"/> characters of a string.
         /// </summary>
         public static string Right(this string text, int charCount)
         {
             return charCount >= text.Length ? text : text[^charCount..];
+        }
+
+        public static string Right(this string text, string rightText)
+        {
+            var charCount = rightText.Length;
+
+            return text.Right(charCount);
+        }
+
+        public static string Left(this string text, string leftText)
+        {
+            var charCount = leftText.Length;
+
+            return charCount >= text.Length ? text : text[..charCount];
         }
 
         /// <summary>
@@ -268,6 +307,12 @@ namespace Eml.Extensions
         public static string TrimLeft(this string text, string head)
         {
             var cnt = head.Length;
+
+            if (cnt > text.Length)
+            {
+                return string.Empty;
+            }
+
             var tmpText = text[..cnt];
 
             return tmpText.IsEqualTo(head) ? text[cnt..] : text;
@@ -327,6 +372,20 @@ namespace Eml.Extensions
         }
 
         /// <summary>
+        /// Join <paramref name="items"/> separated by a new line.
+        /// </summary>
+        public static string ToDelimitedString<T>(this IEnumerable<T> items, string delimiter = "")
+        {
+            var enumerable = items.ToList()
+                .ConvertAll(x => x?.ToString() ?? string.Empty)
+                .ToArray();
+
+            delimiter = string.IsNullOrWhiteSpace(delimiter) ? Environment.NewLine : delimiter;
+
+            return string.Join(delimiter, enumerable.ToArray());
+        }
+
+        /// <summary>
         /// Serialize <typeparamref name="T" /> with the following options:
         ///<list type="bullet">
         /// <item>
@@ -343,11 +402,11 @@ namespace Eml.Extensions
         /// </item>
         ///</list>
         /// </summary>
-        public static string Serialize<T>(this T obj, bool showNullValues = false)
+        public static string Serialize<T>(this T obj, bool showNullValues = false, bool indented = false)
         {
             var options = new JsonSerializerSettings();
 
-            options.SetDefaultOptions(showNullValues);
+            options.SetDefaultOptions(showNullValues, indented);
 
             var objAsString = obj == null ? string.Empty : JsonConvert.SerializeObject(obj, options);
 
