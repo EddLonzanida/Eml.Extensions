@@ -104,7 +104,7 @@ namespace Eml.Extensions
 
         /// <summary>
         /// Compare <paramref name="date1"/> with <paramref name="date2"/>.
-        /// <inheritdoc cref="ToComparableDateTime"/>
+        /// <inheritdoc cref="ToComparableDateTime(System.Nullable{System.DateTime},int)"/>
         /// </summary>
         public static bool IsEqualTo(this DateTime date1, DateTime date2, int decimalPlaces = 2)
         {
@@ -113,6 +113,44 @@ namespace Eml.Extensions
             var isEqual = formattedDate1 == formattedDate2;
 
             return isEqual;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="ToComparableDateTime(DateTime,int)"/>
+        /// </summary>
+        public static string ToComparableDateTime(this DateTime? date1, int decimalPlaces = 2)
+        {
+	        if (date1 == null)
+	        {
+		        return string.Empty;
+	        }
+
+	        var formattedDate1 = date1.Value.ToComparableDateTime(decimalPlaces);
+
+	        return formattedDate1;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="IsEqualTo(DateTime,DateTime,int)"/>
+        /// <para>Will return true of both values are null.</para>
+        /// </summary>
+        public static bool IsEqualTo(this DateTime? date1, DateTime? date2, int decimalPlaces = 2)
+        {
+	        if (date1 == null && date2 == null)
+	        {
+		        return true;
+	        }
+
+	        if (date1 == null || date2 == null)
+	        {
+		        return false;
+	        }
+
+	        var formattedDate1 = date1.ToComparableDateTime(decimalPlaces);
+	        var formattedDate2 = date2.ToComparableDateTime(decimalPlaces);
+	        var isEqual = formattedDate1 == formattedDate2;
+
+	        return isEqual;
         }
 
         /// <summary>
