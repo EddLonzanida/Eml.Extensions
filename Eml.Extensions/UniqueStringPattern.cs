@@ -31,7 +31,7 @@ namespace Eml.Extensions
             assemblyPatterns.AddRange(Patterns);
 
             var itemsToRemove = assemblyPatterns;
-            var results = assemblyPatterns.Except(itemsToRemove, (x, y) => x != y && y.ToLower().StartsWith(x.ToLower()));
+            var results = assemblyPatterns.Except(itemsToRemove, (x, y) => x != y && (y?.ToLower() ?? string.Empty).StartsWith(x?.ToLower() ?? string.Empty));
 
             return results.Distinct().ToList();
         }

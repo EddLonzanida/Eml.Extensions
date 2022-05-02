@@ -7,9 +7,9 @@ namespace Eml.Extensions
 {
     public class UiMessage
     {
-        private string methodName;
+        private string? methodName;
         private readonly List<string> messageList;
-        private readonly List<KeyValuePair<string, string>> htmlTagsWithNoPairToReplace;
+        private readonly List<KeyValuePair<string, string>>? htmlTagsWithNoPairToReplace;
 
         public bool Any => messageList.Any();
 

@@ -22,7 +22,7 @@ namespace Eml.Extensions
 
         public static string GetBinDirectory<T>()
         {
-            return Path.GetDirectoryName(typeof(T).Assembly.Location);
+            return Path.GetDirectoryName(typeof(T).Assembly.Location) ?? string.Empty;
         }
 
         public static List<Assembly> GetReferencingAssemblies(Func<RuntimeLibrary, bool> whereClause)
@@ -146,7 +146,7 @@ namespace Eml.Extensions
         /// <para>Native types are determined if the name or namespace starts with "System".</para>
         /// <para>Complex type properties such as another class, Lists, etc., will be ignored.</para>
         /// </summary>
-        public static List<HasChangesDto> HasChanges<T>(this T type1, T type2, List<string> exceptProperties = null)
+        public static List<HasChangesDto?> HasChanges<T>(this T type1, T type2, List<string>? exceptProperties = null)
             where T : class
         {
             exceptProperties ??= new List<string>();
@@ -310,13 +310,13 @@ namespace Eml.Extensions
                 .ToList();
         }
 
-        public static T GetPropertyAttribute<T>(this PropertyInfo prop)
+        public static T? GetPropertyAttribute<T>(this PropertyInfo prop)
             where T : class
         {
             return prop.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
         }
 
-        public static T GetClassAttribute<T>(this Type type)
+        public static T? GetClassAttribute<T>(this Type type)
             where T : class
         {
             return type.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
