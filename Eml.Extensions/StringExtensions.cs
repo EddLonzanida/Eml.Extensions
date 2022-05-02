@@ -1,8 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -13,7 +10,7 @@ namespace Eml.Extensions
 		/// <summary>
 		/// Case insensitive comparison. Trims both words before comparing.
 		/// </summary>
-		public static bool IsEqualTo(this string source, string value)
+		public static bool IsEqualTo(this string? source, string? value)
 		{
 			return string.Equals(source?.Trim(), value?.Trim(), StringComparison.CurrentCultureIgnoreCase);
 		}
@@ -46,14 +43,19 @@ namespace Eml.Extensions
 		/// <summary>
 		/// Case insensitive comparison.
 		/// </summary>
-		public static bool IsContains(this string source, string value)
+		public static bool IsContains(this string? source, string value)
 		{
 			if (value.IsNullOrWhiteSpace())
 			{
-				return source.IsNullOrWhiteSpace();
+				return string.IsNullOrWhiteSpace(source);
 			}
 
-			return source.Contains(value, StringComparison.CurrentCultureIgnoreCase);
+			if (!string.IsNullOrWhiteSpace(source))
+			{
+				return source.Contains(value, StringComparison.CurrentCultureIgnoreCase);
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -275,16 +277,26 @@ namespace Eml.Extensions
 			return charCount >= text.Length ? text : text[^charCount..];
 		}
 
-		public static string Right(this string text, string rightText)
+		public static string? Right(this string? text, string rightText)
 		{
 			var charCount = rightText.Length;
+
+			if (string.IsNullOrWhiteSpace(text))
+			{
+				return text;
+			}
 
 			return text.Right(charCount);
 		}
 
-		public static string Left(this string text, string leftText)
+		public static string? Left(this string? text, string leftText)
 		{
 			var charCount = leftText.Length;
+
+			if (string.IsNullOrWhiteSpace(text))
+			{
+				return text;
+			}
 
 			return charCount >= text.Length ? text : text[..charCount];
 		}
@@ -304,11 +316,11 @@ namespace Eml.Extensions
 		/// <summary>
 		/// Remove string at the start. Case insensitive.
 		/// </summary>
-		public static string TrimLeft(this string text, string head)
+		public static string TrimLeft(this string text, string? head)
 		{
-			var cnt = head.Length;
+			var cnt = head?.Length ?? 0;
 
-			if (cnt > text.Length)
+			if (cnt > text.Length || cnt == 0)
 			{
 				return string.Empty;
 			}

@@ -109,7 +109,7 @@ namespace Eml.Extensions
         /// <summary>
         /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
-        public static List<T> GetJsonStubs<T>(this string jsonFile, string relativeFolder)
+        public static List<T>? GetJsonStubs<T>(this string jsonFile, string relativeFolder)
             where T : class
         {
             var jsonText = jsonFile.GetJsonAsString<T>(relativeFolder);
@@ -169,7 +169,7 @@ namespace Eml.Extensions
         /// <summary>
         /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
-        public static async Task<List<T>> GetJsonStubsAsync<T>(this string jsonFile, string relativeFolder)
+        public static async Task<List<T>?> GetJsonStubsAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
         {
             var jsonText = await jsonFile.GetJsonAsStringAsync<T>(relativeFolder);
@@ -182,7 +182,7 @@ namespace Eml.Extensions
         /// Deserialize json files for Seeding purposes.
         /// <inheritdoc cref="GetFullPath{T}(string,string)"/>
         /// </summary>
-        public static T GetJsonStub<T>(this string jsonFile, string relativeFolder)
+        public static T? GetJsonStub<T>(this string jsonFile, string relativeFolder)
             where T : class
         {
 
@@ -195,7 +195,7 @@ namespace Eml.Extensions
         /// <summary>
         /// Deserialize json files for Seeding purposes.
         /// </summary>
-        public static T GetJsonStubFromFullPath<T>(this string fullPath)
+        public static T? GetJsonStubFromFullPath<T>(this string fullPath)
             where T : class
         {
             var jsonText = fullPath.GetFileContentsAsString();
@@ -208,7 +208,7 @@ namespace Eml.Extensions
         /// <summary>
         /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
-        public static async Task<T> GetJsonStubAsync<T>(this string jsonFile, string relativeFolder)
+        public static async Task<T?> GetJsonStubAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
         {
             var jsonText = await jsonFile.GetJsonAsStringAsync<T>(relativeFolder);
@@ -220,7 +220,7 @@ namespace Eml.Extensions
         /// <summary>
         /// <inheritdoc cref="GetJsonStub{T}(string,string)"/>
         /// </summary>
-        public static async Task<T> GetJsonStubFromListAsync<T>(this string jsonFile, string relativeFolder)
+        public static async Task<T?> GetJsonStubFromListAsync<T>(this string jsonFile, string relativeFolder)
             where T : class
         {
             var jsonText = await jsonFile.GetJsonAsStringAsync<T>(relativeFolder);

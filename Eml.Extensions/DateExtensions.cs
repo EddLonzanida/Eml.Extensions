@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 
 namespace Eml.Extensions
@@ -12,7 +11,7 @@ namespace Eml.Extensions
 		/// <summary>
 		/// Format date using the specified format. Returns empty string if date is null.
 		/// </summary>
-		private static string ToStringOrDefault(this DateTime? source, string format, string defaultValue)
+		private static string ToStringOrDefault(this DateTime? source, string format, string? defaultValue)
 		{
 			if (source != null)
 			{
@@ -72,6 +71,11 @@ namespace Eml.Extensions
 			}
 
 			var d = source?.ToString("yyyy-MM-dd 23:59:59");
+
+			if (d == null)
+			{
+				return null;
+			}
 
 			return DateTime.ParseExact(d, STANDARD_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
 		}
