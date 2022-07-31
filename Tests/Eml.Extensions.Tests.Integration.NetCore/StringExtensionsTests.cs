@@ -39,6 +39,10 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [InlineData("one Two three", "One Two Three")]
         [InlineData(" one  Two       three ", "One Two Three")]
         [InlineData("FulfillmentJobEnabled", "Fulfillment Job Enabled")]
+        [InlineData("GFDMS", "GFDMS")]
+        [InlineData("FHLMC GFDMS", "FHLMC GFDMS")]
+        [InlineData("MortgageSchedule", "Mortgage Schedule")]
+        [InlineData("WholeLoan", "Whole Loan")]
         public void ToSpaceDelimitedWords_ShouldDelimitedWords(string sut, string expectedResult)
         {
             sut.ToSpaceDelimitedWords().ShouldBe(expectedResult);
@@ -66,6 +70,7 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         [InlineData("Title", "Titles")]
         [InlineData("TITLE", "TITLES")]
         [InlineData("Tab", "Tabs")]
+        [InlineData("Tabs", "Tabs")]
         [InlineData("man", "men")]
         [InlineData("woman", "women")]
         [InlineData("child", "children")]
@@ -78,7 +83,6 @@ namespace Eml.Extensions.Tests.Integration.NetCore
         {
             sut.Pluralize().ShouldBe(expectedResult);
         }
-
 
         [Theory]
         [InlineData("Generic`1", "`1", "Generic")]
