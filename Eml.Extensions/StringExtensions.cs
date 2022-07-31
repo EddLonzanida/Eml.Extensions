@@ -63,18 +63,13 @@ namespace Eml.Extensions
 		/// </summary>
 		public static string FindReplaceUsingRegEx(this string body, string regexPattern, string value)
 		{
-			body = Regex.Replace(body, regexPattern, value);
+			var tmpBody = Regex.Replace(body, regexPattern, value);
 
-			return body;
+			return tmpBody;
 		}
 
 		public static string FindReplaceUsingRegEx(this string body, List<string> regexPatterns, string value)
 		{
-			if (regexPatterns == null)
-			{
-				return body;
-			}
-
 			if (!regexPatterns.Any())
 			{
 				return body;
@@ -82,7 +77,22 @@ namespace Eml.Extensions
 
 			foreach (var regEx in regexPatterns)
 			{
-				body = Regex.Replace(body, regEx, value);
+				body = body.FindReplaceUsingRegEx(regEx, value);
+			}
+
+			return body;
+		}
+
+		public static string FindReplaceUsingRegEx(this string body, List<KeyValuePair<string, string>> regexPatterns)
+		{
+			if (!regexPatterns.Any())
+			{
+				return body;
+			}
+
+			foreach (var regEx in regexPatterns)
+			{
+				body = body.FindReplaceUsingRegEx(regEx.Key, regEx.Value);
 			}
 
 			return body;
@@ -153,11 +163,29 @@ namespace Eml.Extensions
 		/// </summary>
 		public static string ToSpaceDelimitedWords(this string word)
 		{
+			const string delimiter = " ";
+
 			var result = Regex.Replace(word, @"\s\s+", " ");
 
 			result = Regex.Replace(result, "([a-z](?=[A-Z])|[A-Z](?=[A-Z][a-z]))", "$1 ")
-			   .ToProperCase(' ')
 			   .Trim();
+			var aWords = new List<string>();
+
+			aWords.AddRange(result.Split(delimiter));
+
+			switch (aWords.Count)
+			{
+				case < 1:
+					return result;
+				case 1:
+					return result.UppercaseFirst();
+			}
+
+			aWords = aWords.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Select(x => x.Trim())
+				.Select(UppercaseFirst).ToList();
+
+			result = aWords.ToDelimitedString(delimiter);
 
 			return result;
 		}
@@ -392,7 +420,9 @@ namespace Eml.Extensions
 				.ConvertAll(x => x?.ToString() ?? string.Empty)
 				.ToArray();
 
-			delimiter = string.IsNullOrWhiteSpace(delimiter) ? Environment.NewLine : delimiter;
+			var defaultDelimiter = string.Empty;
+
+			delimiter = delimiter == defaultDelimiter ? Environment.NewLine : delimiter;
 
 			return string.Join(delimiter, enumerable.ToArray());
 		}
