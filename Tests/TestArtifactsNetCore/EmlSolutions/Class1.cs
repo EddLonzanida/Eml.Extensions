@@ -1,8 +1,5 @@
-﻿using System;
+﻿namespace EmlSolutions;
 
-namespace EmlSolutions
+public class Class1
 {
-    public class Class1
-    {
-    }
 }
