@@ -1,6 +1,5 @@
-﻿namespace Assembly2
+﻿namespace Assembly2;
+
+public interface IClassBase2
 {
-    public interface IClassBase2
-    {
-    }
 }
