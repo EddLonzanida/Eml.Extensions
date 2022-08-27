@@ -1,44 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Eml.Extensions;
 
-namespace Eml.Extensions
+public sealed class UniqueStringPattern : IDisposable
 {
-    public sealed class UniqueStringPattern : IDisposable
+    private List<string> Patterns { get; } = new();
+
+    public UniqueStringPattern(IReadOnlyCollection<string> patterns)
     {
-        private List<string> Patterns { get; } = new List<string>();
-
-        public UniqueStringPattern(IReadOnlyCollection<string> patterns)
+        if (patterns == null)
         {
-            if (patterns == null) return;
-
-            Patterns = patterns.ToList()
-                .Where(r => !string.IsNullOrWhiteSpace(r))
-                .ToList()
-                .ConvertAll(r => r.Trim());
-
-            if (!Patterns.Any()) throw new Exception("Pattern is required.");
-
-            Patterns.Sort();
+            return;
         }
 
-        public List<string> Build()
+        Patterns = patterns.ToList()
+            .Where(r => !string.IsNullOrWhiteSpace(r))
+            .ToList()
+            .ConvertAll(r => r.Trim());
+
+        if (!Patterns.Any())
         {
-            var assemblyPatterns = new List<string>();
-
-            if (!Patterns.Any()) return assemblyPatterns;
-
-            assemblyPatterns.AddRange(Patterns);
-
-            var itemsToRemove = assemblyPatterns;
-            var results = assemblyPatterns.Except(itemsToRemove, (x, y) => x != y && (y?.ToLower() ?? string.Empty).StartsWith(x?.ToLower() ?? string.Empty));
-
-            return results.Distinct().ToList();
+            throw new Exception("Pattern is required.");
         }
 
-        public void Dispose()
+        Patterns.Sort();
+    }
+
+    public void Dispose()
+    {
+        Patterns?.Clear();
+    }
+
+    public List<string> Build()
+    {
+        var assemblyPatterns = new List<string>();
+
+        if (!Patterns.Any())
         {
-            Patterns?.Clear();
+            return assemblyPatterns;
         }
+
+        assemblyPatterns.AddRange(Patterns);
+
+        var itemsToRemove = assemblyPatterns;
+        var results = assemblyPatterns.Except(itemsToRemove, (x, y) => x != y && (y?.ToLower() ?? string.Empty).StartsWith(x?.ToLower() ?? string.Empty));
+
+        return results.Distinct().ToList();
     }
 }

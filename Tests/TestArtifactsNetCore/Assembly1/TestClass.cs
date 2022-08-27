@@ -1,8 +1,8 @@
-﻿namespace Assembly1
+﻿namespace Assembly1;
+
+public class TestClass
 {
-    public class TestClass
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-    }
+    public string FirstName { get; set; }
+
+    public string LastName { get; set; }
 }
