@@ -1,4 +1,4 @@
-﻿namespace Eml.Extensions;
+namespace Eml.Extensions;
 
 public static class LinqExtensions
 {
@@ -24,48 +24,6 @@ public static class LinqExtensions
         Func<TSource?, TSource?, bool> comparer)
     {
         return mainList.Intersect(listToIntersect, new LambdaEqualityComparer<TSource>(comparer)).ToList();
-    }
-
-    /// <summary>
-    ///     Credit: <see href="https://github.com/morelinq/MoreLINQ/blob/master/MoreLinq/DistinctBy.cs">MoreLinq</see>
-    /// </summary>
-    public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
-        Func<TSource, TKey> keySelector)
-    {
-        return source.DistinctBy(keySelector, null);
-    }
-
-    /// <summary>
-    ///     Credit: <see href="https://github.com/morelinq/MoreLINQ/blob/master/MoreLinq/DistinctBy.cs">MoreLinq</see>
-    /// </summary>
-    public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
-        Func<TSource, TKey> keySelector,
-        IEqualityComparer<TKey>? comparer)
-    {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (keySelector == null)
-        {
-            throw new ArgumentNullException(nameof(keySelector));
-        }
-
-        return _();
-
-        IEnumerable<TSource> _()
-        {
-            var knownKeys = new HashSet<TKey>(comparer);
-
-            foreach (var element in source)
-            {
-                if (knownKeys.Add(keySelector(element)))
-                {
-                    yield return element;
-                }
-            }
-        }
     }
 
     /// <summary>
