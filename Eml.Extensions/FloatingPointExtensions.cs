@@ -24,11 +24,11 @@ public static class FloatingPointExtensions
 
     public static bool IsZero(this float value, int decimalPlaceValue = 5)
     {
-        return value < (float) Math.Pow(10, -decimalPlaceValue);
+        return value < (float)Math.Pow(10, -decimalPlaceValue);
     }
 
     public static bool IsZero(this decimal value, int decimalPlaceValue = 5)
     {
-        return value < (decimal) Math.Pow(10, -decimalPlaceValue);
+        return value < (decimal)Math.Pow(10, -decimalPlaceValue);
     }
 }

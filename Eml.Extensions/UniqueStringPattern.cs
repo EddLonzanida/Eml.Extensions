@@ -1,10 +1,10 @@
-﻿namespace Eml.Extensions;
+namespace Eml.Extensions;
 
 public sealed class UniqueStringPattern : IDisposable
 {
     private List<string> Patterns { get; } = new();
 
-    public UniqueStringPattern(IReadOnlyCollection<string> patterns)
+    public UniqueStringPattern(IReadOnlyCollection<string>? patterns)
     {
         if (patterns == null)
         {
@@ -40,8 +40,9 @@ public sealed class UniqueStringPattern : IDisposable
 
         assemblyPatterns.AddRange(Patterns);
 
-        var itemsToRemove = assemblyPatterns;
-        var results = assemblyPatterns.Except(itemsToRemove, (x, y) => x != y && (y?.ToLower() ?? string.Empty).StartsWith(x?.ToLower() ?? string.Empty));
+        var results = assemblyPatterns.Except(assemblyPatterns, (x, y) => x != y
+                                                                          && (y?.ToLower() ?? string.Empty)
+                                                                          .StartsWith(x?.ToLower() ?? string.Empty));
 
         return results.Distinct().ToList();
     }
