@@ -1,4 +1,4 @@
-﻿namespace Eml.Extensions;
+namespace Eml.Extensions;
 
 /// <summary>
 ///     Used by LinqExtensions.
@@ -11,16 +11,18 @@ public class LambdaEqualityComparer<T> : IEqualityComparer<T>
     private readonly Func<T?, int> lambdaHash;
 
     /// <summary>
-    ///     Example: new LambdaEqualityComparer&lt;TSource&gt;(comparer)
+    ///     Example:
+    ///     <code language="c#">new LambdaEqualityComparer<TSource></TSource>(<paramref name="lambdaComparer" />)</code>
     ///     <para>Declaration:</para>
-    ///     <para>Func&lt;TSource, TSource, bool&gt; comparer</para>
+    ///     <code language="c#">Func&lt;TSource, TSource, bool&gt; <paramref name="lambdaComparer" /></code>
     /// </summary>
     public LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer) :
         this(lambdaComparer, o => 0)
     {
     }
 
-    private LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer, Func<T?, int> lambdaHash)
+    private LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer,
+        Func<T?, int> lambdaHash)
     {
         this.lambdaComparer = lambdaComparer.CheckNotNull();
         this.lambdaHash = lambdaHash.CheckNotNull();

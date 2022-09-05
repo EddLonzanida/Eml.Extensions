@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -436,6 +436,7 @@ public static class StringExtensions
 
     /// <summary>
     ///     Join <paramref name="items" /> separated by a new line.
+    ///     <para>Pass-in comma or pipe for the delimiter.</para>
     /// </summary>
     public static string ToDelimitedString<T>(this IEnumerable<T> items, string delimiter = "")
     {

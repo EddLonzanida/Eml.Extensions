@@ -20,17 +20,17 @@ public class LambdaComparer<T> : IComparer<T>
     {
         if (x == null && y == null)
         {
-            return (int) eSortFlag.Equal;
+            return (int)eSortFlag.Equal;
         }
 
         if (x != null && y == null)
         {
-            return (int) eSortFlag.GreaterThan;
+            return (int)eSortFlag.GreaterThan;
         }
 
         if (x == null && y != null)
         {
-            return (int) eSortFlag.LessThan;
+            return (int)eSortFlag.LessThan;
         }
 
         return lambdaComparer(x, y);

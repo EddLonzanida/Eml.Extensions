@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.DependencyModel;
 using System.Reflection;
 
 namespace Eml.Extensions;
@@ -178,7 +178,12 @@ public static class TypeExtensions
 
                 if (!isEqual)
                 {
-                    return new HasChangesDto { PropertyName = x.Name, Value1 = t1Value, Value2 = t2Value };
+                    return new HasChangesDto
+                    {
+                        PropertyName = x.Name,
+                        Value1 = t1Value,
+                        Value2 = t2Value
+                    };
                 }
 
                 return null;

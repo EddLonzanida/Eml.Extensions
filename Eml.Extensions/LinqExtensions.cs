@@ -131,7 +131,10 @@ public static class LinqExtensions
     /// <summary>
     ///     <inheritdoc cref="GetDuplicateItemsLastInWins{T,TKey}(IEnumerable{T},Func{T,TKey},bool)" />
     /// </summary>
-    public static List<T> GetDuplicateItemsLastInWins<T, TKey>(this IEnumerable<T> items, Func<T, bool> where, Func<T, TKey> keySelector, bool includeGroupCountIs1)
+    public static List<T> GetDuplicateItemsLastInWins<T, TKey>(this IEnumerable<T> items,
+        Func<T, bool> where,
+        Func<T, TKey> keySelector,
+        bool includeGroupCountIs1)
     {
         return items.GetUniqueItems(keySelector, where, includeGroupCountIs1);
     }
@@ -140,7 +143,9 @@ public static class LinqExtensions
     ///     <para>Returns distinct list of <typeparamref name="T" />.</para>
     ///     <para>Get last row of the group. Last in wins.</para>
     /// </summary>
-    public static List<T> GetDuplicateItemsLastInWins<T, TKey>(this IEnumerable<T> items, Func<T, TKey> keySelector, bool includeGroupCountIs1)
+    public static List<T> GetDuplicateItemsLastInWins<T, TKey>(this IEnumerable<T> items,
+        Func<T, TKey> keySelector,
+        bool includeGroupCountIs1)
     {
         return items.GetUniqueItems(keySelector, null, includeGroupCountIs1);
     }
@@ -149,12 +154,19 @@ public static class LinqExtensions
     ///     <para>Returns distinct list of <typeparamref name="T" />.</para>
     ///     <para>Get last row of the group. First in wins.</para>
     /// </summary>
-    public static List<T> GetDuplicateItemsFirstInWins<T, TKey>(this IEnumerable<T> items, Func<T, bool> where, Func<T, TKey> keySelector, bool includeGroupCountIs1)
+    public static List<T> GetDuplicateItemsFirstInWins<T, TKey>(this IEnumerable<T> items,
+        Func<T, bool> where,
+        Func<T, TKey> keySelector,
+        bool includeGroupCountIs1)
     {
         return items.GetUniqueItems(keySelector, where, true, includeGroupCountIs1);
     }
 
-    public static List<T> GetUniqueItems<T, TKey>(this IEnumerable<T> items, Func<T, TKey> keySelector, Func<T, bool>? where = null, bool includeGroupCountIs1 = false, bool lastInWins = true)
+    public static List<T> GetUniqueItems<T, TKey>(this IEnumerable<T> items,
+        Func<T, TKey> keySelector,
+        Func<T, bool>? where = null,
+        bool includeGroupCountIs1 = false,
+        bool lastInWins = true)
     {
         if (lastInWins)
         {
