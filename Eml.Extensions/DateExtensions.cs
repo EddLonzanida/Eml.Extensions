@@ -5,13 +5,14 @@ namespace Eml.Extensions;
 
 public static class DateExtensions
 {
-    private const string STANDARD_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    private const string STANDARD_DATE = "yyyy-MM-dd";
+    public const string STANDARD_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    public const string STANDARD_DATE = "yyyy-MM-dd";
 
     /// <summary>
     ///     Format date using the specified format. Returns empty string if date is null.
     /// </summary>
-    private static string ToStringOrDefault(this DateTime? source, string format, string? defaultValue)
+    private static string ToStringOrDefault(this DateTime? source, string format, string defaultValue)
     {
         if (source != null)
         {
@@ -61,6 +62,16 @@ public static class DateExtensions
     }
 
     /// <summary>
+    ///     Returns military time yyyy-MM-dd 23:59:59
+    /// </summary>
+    public static string ToStringBeforeMidnight(this DateTime? source)
+    {
+        var beforeMidNight = source?.ToString("yyyy-MM-dd 23:59:59", CultureInfo.InvariantCulture);
+
+        return beforeMidNight;
+    }
+
+    /// <summary>
     ///     Returns 23:59:59
     /// </summary>
     public static DateTime? ToBeforeMidnight(this DateTime? source)
@@ -70,18 +81,13 @@ public static class DateExtensions
             return null;
         }
 
-        var d = source?.ToString("yyyy-MM-dd 23:59:59");
-
-        if (d == null)
-        {
-            return null;
-        }
+        var d = source.Value.ToString("yyyy-MM-dd 23:59:59");
 
         return DateTime.ParseExact(d, STANDARD_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
     }
 
     /// <summary>
-    ///     DateTime.TryParse(dateAsString, out var date)
+    ///     Uses DateTime.TryParse(dateAsString, out var date)
     /// </summary>
     public static DateTime? ToDateTime(this string dateAsString)
     {
@@ -110,7 +116,7 @@ public static class DateExtensions
 
     /// <summary>
     ///     Compare <paramref name="date1" /> with <paramref name="date2" />.
-    ///     <inheritdoc cref="ToComparableDateTime(System.Nullable{System.DateTime},int)" />
+    ///     <inheritdoc cref="ToComparableDateTime(DateTime,int)" />
     /// </summary>
     public static bool IsEqualTo(this DateTime date1, DateTime date2, int decimalPlaces = 2)
     {
@@ -119,21 +125,6 @@ public static class DateExtensions
         var isEqual = formattedDate1 == formattedDate2;
 
         return isEqual;
-    }
-
-    /// <summary>
-    ///     <inheritdoc cref="ToComparableDateTime(DateTime,int)" />
-    /// </summary>
-    public static string ToComparableDateTime(this DateTime? date1, int decimalPlaces = 2)
-    {
-        if (date1 == null)
-        {
-            return string.Empty;
-        }
-
-        var formattedDate1 = date1.Value.ToComparableDateTime(decimalPlaces);
-
-        return formattedDate1;
     }
 
     /// <summary>
@@ -162,7 +153,7 @@ public static class DateExtensions
     /// <summary>
     ///     <para>Round off the milliseconds before comparing.</para>
     ///     <para>
-    ///         This is a workaround because the 'fff' date format simply truncates the milliseconds and does not perform
+    ///         This is a workaround because the 'FF' date format simply truncates the milliseconds and does not perform
     ///         rounding off.
     ///     </para>
     /// </summary>
@@ -178,18 +169,6 @@ public static class DateExtensions
         var formattedDate1 = $"{dt1}.{ms1}";
 
         return formattedDate1;
-    }
-
-    public static string StopAndGetDuration(this Stopwatch stopwatch)
-    {
-        stopwatch.Stop();
-
-        var elapsedTime = stopwatch.Elapsed;
-        var duration = $"{elapsedTime.Hours:00}:{elapsedTime.Minutes:00}:{elapsedTime.Seconds:00}.{elapsedTime.Milliseconds / 10:00}";
-
-        stopwatch.Reset();
-
-        return duration;
     }
 
     /// <summary>
@@ -211,5 +190,56 @@ public static class DateExtensions
         }
 
         return string.Empty;
+    }
+
+    /// <summary>
+    ///     <inheritdoc cref="ToComparableDateTime(DateTime,int)" />
+    /// </summary>
+    public static string ToComparableDateTime(this DateTime? date1, int decimalPlaces = 2)
+    {
+        if (date1 == null)
+        {
+            return string.Empty;
+        }
+
+        var formattedDate1 = date1.Value.ToComparableDateTime(decimalPlaces);
+
+        return formattedDate1;
+    }
+
+    public static string GetDuration(this DateTime start, DateTime end, bool showMilliseconds = true)
+    {
+        var elapsedTime = end - start;
+
+        if (showMilliseconds)
+        {
+            return $"{elapsedTime.Hours:00}:{elapsedTime.Minutes:00}:{elapsedTime.Seconds:00}.{elapsedTime.Milliseconds / 10:00}";
+        }
+
+        var roundedMsToSecValue = elapsedTime.Milliseconds / 1000;
+        var seconds = elapsedTime.Seconds + roundedMsToSecValue;
+
+        return $"{elapsedTime.Hours:00}:{elapsedTime.Minutes:00}:{seconds:00}";
+    }
+
+    public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds = true)
+    {
+        var start1 = start ?? defaultValue;
+        var end2 = end ?? defaultValue;
+        var duration = start1.GetDuration(end2, showMilliseconds);
+
+        return duration;
+    }
+
+    public static string StopAndGetDuration(this Stopwatch stopwatch)
+    {
+        stopwatch.Stop();
+
+        var elapsedTime = stopwatch.Elapsed;
+        var duration = $"{elapsedTime.Hours:00}:{elapsedTime.Minutes:00}:{elapsedTime.Seconds:00}.{elapsedTime.Milliseconds / 10:00}";
+
+        stopwatch.Reset();
+
+        return duration;
     }
 }
