@@ -207,6 +207,9 @@ public static class DateExtensions
         return formattedDate1;
     }
 
+    /// <summary>
+    /// If showMilliseconds is false, will round milliseconds to the nearest seconds.
+    /// </summary>
     public static string GetDuration(this DateTime start, DateTime end, bool showMilliseconds = true)
     {
         var elapsedTime = end - start;
@@ -222,6 +225,9 @@ public static class DateExtensions
         return $"{elapsedTime.Hours:00}:{elapsedTime.Minutes:00}:{seconds:00}";
     }
 
+    /// <summary>
+    /// <inheritdoc cref="GetDuration(System.DateTime,System.DateTime,bool)"/>
+    /// </summary>
     public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds = true)
     {
         var start1 = start ?? defaultValue;
@@ -231,6 +237,9 @@ public static class DateExtensions
         return duration;
     }
 
+    /// <summary>
+    /// Will stop and reset the Stopwatch.
+    /// </summary>
     public static string StopAndGetDuration(this Stopwatch stopwatch)
     {
         stopwatch.Stop();
