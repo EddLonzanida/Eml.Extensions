@@ -17,7 +17,6 @@ max_line_length = off
 charset = utf-8-bom
 
 [*.cs]
-# max_line_length = 170
 # API1000: Action returns undeclared status code.
 dotnet_diagnostic.API1000.severity = none
 
