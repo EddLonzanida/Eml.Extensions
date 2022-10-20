@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Eml.Extensions;
 
@@ -208,7 +209,7 @@ public static class DateExtensions
     }
 
     /// <summary>
-    /// If showMilliseconds is false, will round milliseconds to the nearest seconds.
+    ///     If showMilliseconds is false, will round milliseconds to the nearest seconds.
     /// </summary>
     public static string GetDuration(this DateTime start, DateTime end, bool showMilliseconds = true)
     {
@@ -226,7 +227,7 @@ public static class DateExtensions
     }
 
     /// <summary>
-    /// <inheritdoc cref="GetDuration(System.DateTime,System.DateTime,bool)"/>
+    ///     <inheritdoc cref="GetDuration(System.DateTime,System.DateTime,bool)" />
     /// </summary>
     public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds = true)
     {
@@ -238,7 +239,7 @@ public static class DateExtensions
     }
 
     /// <summary>
-    /// Will stop and reset the Stopwatch.
+    ///     Will stop and reset the Stopwatch.
     /// </summary>
     public static string StopAndGetDuration(this Stopwatch stopwatch)
     {
@@ -250,5 +251,45 @@ public static class DateExtensions
         stopwatch.Reset();
 
         return duration;
+    }
+
+    /// <summary>
+    ///     <para>Used to get the callsite for Logging purposes.</para>
+    ///     <para>Will search for files within the specified <paramref name="applicationRootNamespace" />.</para>
+    ///     <para>Will check InnerException first.</para>
+    ///     <para>Example:</para>
+    ///     <code language="c#">
+    ///      var callSite = e.GetCallSite(AppConstants.ApplicationRootNamespace, new[] { "NuGets", "Helpers", "Extensions" });
+    ///     </code>
+    /// </summary>
+    public static string GetCallSite(this Exception exception, string applicationRootNamespace, string[]? excludedPaths = null)
+    {
+        var regExPattern = $@".*[\\\/]{applicationRootNamespace}\..*";
+
+        if (excludedPaths is { Length: > 0 })
+        {
+            var excludedPathsAsString = excludedPaths.ToDelimitedString("|");
+
+            regExPattern = $"(?!.*({excludedPathsAsString}).*){regExPattern}";
+        }
+
+        var stackTraceSplit = (exception.InnerException?.StackTrace ?? exception.StackTrace)?.Split(Environment.NewLine);
+        var callSite = stackTraceSplit?.FirstOrDefault(x => Regex.IsMatch(x, regExPattern))?.Trim() ?? string.Empty;
+        var aCallSite = callSite.Split(" in ");
+
+        callSite = aCallSite.LastOrDefault()?.Trim() ?? string.Empty;
+
+        return callSite;
+    }
+
+    /// <summary>
+    ///     <para>Get the Exception Message.</para>
+    ///     <para>Will check InnerException first.</para>
+    /// </summary>
+    public static string GetErrorMessage(this Exception exception)
+    {
+        var errorMessage = exception.InnerException?.Message ?? exception.Message;
+
+        return errorMessage;
     }
 }
