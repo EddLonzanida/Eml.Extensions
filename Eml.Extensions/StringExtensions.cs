@@ -539,4 +539,32 @@ public static class StringExtensions
 
         return string.Join($"{Environment.NewLine}", list.ToArray());
     }
+
+    /// <summary>
+    /// Calls Convert.ToHexString(byteArray) and prefix with 0x.
+    /// </summary>
+    public static string GetString(this byte[]? byteArray, bool ignoreNull)
+    {
+        if (byteArray == null && !ignoreNull)
+        {
+            throw new Exception($"The parameter {nameof(byteArray)} is null.");
+        }
+
+        if (byteArray == null)
+        {
+            return string.Empty;
+        }
+
+        var byteAsString = Convert.ToHexString(byteArray);
+
+        return $"0x{byteAsString}";
+    }
+
+    /// <summary>
+    /// <inheritdoc cref="GetString(byte[],bool)"/>
+    /// </summary>
+    public static string GetString(this byte[]? byteArray)
+    {
+        return byteArray.GetString(false);
+    }
 }
