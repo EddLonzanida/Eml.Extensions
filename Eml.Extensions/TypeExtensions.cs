@@ -173,7 +173,17 @@ public static class TypeExtensions
                 }
                 else
                 {
-                    isEqual = t1Value.Equals(t2Value);
+                    if (x.PropertyType == typeof(byte[]))
+                    {
+                        var v1 = ((byte[])t1Value).GetString();
+                        var v2 = ((byte[])t2Value!).GetString();
+
+                        isEqual = v1.Equals(v2);
+                    }
+                    else
+                    {
+                        isEqual = t1Value.Equals(t2Value);
+                    }
                 }
 
                 if (!isEqual)
