@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace Eml.Extensions;
 
@@ -28,7 +27,7 @@ public static class DateExtensions
     /// </summary>
     public static string ToStringOrDefault(this DateTime? source, string format)
     {
-        return ToStringOrDefault(source, format, null);
+        return ToStringOrDefault(source, format, string.Empty);
     }
 
     /// <summary>
@@ -69,7 +68,7 @@ public static class DateExtensions
     {
         var beforeMidNight = source?.ToString("yyyy-MM-dd 23:59:59", CultureInfo.InvariantCulture);
 
-        return beforeMidNight;
+        return beforeMidNight ?? string.Empty;
     }
 
     /// <summary>
@@ -251,45 +250,5 @@ public static class DateExtensions
         stopwatch.Reset();
 
         return duration;
-    }
-
-    /// <summary>
-    ///     <para>Used to get the callsite for Logging purposes.</para>
-    ///     <para>Will search for files within the specified <paramref name="applicationRootNamespace" />.</para>
-    ///     <para>Will check InnerException first.</para>
-    ///     <para>Example:</para>
-    ///     <code language="c#">
-    ///      var callSite = e.GetCallSite(AppConstants.ApplicationRootNamespace, new[] { "NuGets", "Helpers", "Extensions" });
-    ///     </code>
-    /// </summary>
-    public static string GetCallSite(this Exception exception, string applicationRootNamespace, string[]? excludedPaths = null)
-    {
-        var regExPattern = $@".*[\\\/]{applicationRootNamespace}\..*";
-
-        if (excludedPaths is { Length: > 0 })
-        {
-            var excludedPathsAsString = excludedPaths.ToDelimitedString("|");
-
-            regExPattern = $"(?!.*({excludedPathsAsString}).*){regExPattern}";
-        }
-
-        var stackTraceSplit = (exception.InnerException?.StackTrace ?? exception.StackTrace)?.Split(Environment.NewLine);
-        var callSite = stackTraceSplit?.FirstOrDefault(x => Regex.IsMatch(x, regExPattern))?.Trim() ?? string.Empty;
-        var aCallSite = callSite.Split(" in ");
-
-        callSite = aCallSite.LastOrDefault()?.Trim() ?? string.Empty;
-
-        return callSite;
-    }
-
-    /// <summary>
-    ///     <para>Get the Exception Message.</para>
-    ///     <para>Will check InnerException first.</para>
-    /// </summary>
-    public static string GetErrorMessage(this Exception exception)
-    {
-        var errorMessage = exception.InnerException?.Message ?? exception.Message;
-
-        return errorMessage;
     }
 }

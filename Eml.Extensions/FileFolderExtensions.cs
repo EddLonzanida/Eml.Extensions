@@ -249,4 +249,13 @@ public static class FileFolderExtensions
 
         return xmlPath;
     }
+
+    public static async Task<List<TResult>?> GetJsonStubsAsync<T, TResult>(this string jsonFile, string subFolder)
+        where T : class
+    {
+        var jsonText = await jsonFile.GetJsonAsStringAsync<T>(subFolder);
+        var initialData = JsonConvert.DeserializeObject<List<TResult>>(jsonText);
+
+        return initialData;
+    }
 }
