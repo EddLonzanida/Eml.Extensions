@@ -115,34 +115,32 @@ public static class TypeExtensions
         return properties.ToList();
     }
 
-    /// <summary>
-    ///     Get all public properties except complex types.
-    /// </summary>
-    public static List<PropertyInfo> GetPublicNativeTypeProperties(this Type type)
+    public static Dictionary<string, List<HasChangesDto>> HasChanges<T>(this IEnumerable<T> type1, List<T> type2, Func<T, T, bool> comparer, Func<T, string> key, List<string>? exceptProperties = null)
+        where T : class
     {
-        var properties = type.GetPublicProperties();
+        var result = new Dictionary<string, List<HasChangesDto>>();
 
-        var items = properties
-            .Where(x =>
+        foreach (var left in type1)
+        {
+            var right = type2.FirstOrDefault(x => comparer(left, x));
+
+            if (right == null)
             {
-                var getMethod = x.GetMethod;
+                continue;
+            }
 
-                if (getMethod == null)
-                {
-                    return false;
-                }
+            var hasChanges = left.HasChanges(right, exceptProperties);
 
-                var getMethodAsString = getMethod.ToString() ?? string.Empty;
-                var getMethodReturnTypeAsString = getMethod.ReturnType.FullName ?? string.Empty;
+            if (hasChanges?.Any() ?? false)
+            {
+                var k = key(left);
 
-                return (getMethodAsString.StartsWith("System") || getMethodReturnTypeAsString.StartsWith("System"))
-                       && !getMethod.ReturnType.Name.StartsWith("List");
-            })
-            .ToList();
+                result.Add(k, hasChanges);
+            }
+        }
 
-        return items;
+        return result;
     }
-
     /// <summary>
     ///     <para>
     ///         Checks if <paramref name="type1" /> and <paramref name="type2" /> is equal by iterating through all their
@@ -381,5 +379,33 @@ public static class TypeExtensions
                                                                            && type.IsSealed
                                                                            && type.IsAbstract))
             .ToList();
+    }
+
+    /// <summary>
+    ///     Get all public properties except complex types.
+    /// </summary>
+    public static List<PropertyInfo> GetPublicNativeTypeProperties(this Type type)
+    {
+        var properties = type.GetPublicProperties();
+
+        var items = properties
+            .Where(x =>
+            {
+                var getMethod = x.GetMethod;
+
+                if (getMethod == null)
+                {
+                    return false;
+                }
+
+                var getMethodAsString = getMethod.ToString() ?? string.Empty;
+                var getMethodReturnTypeAsString = getMethod.ReturnType.FullName ?? string.Empty;
+
+                return (getMethodAsString.StartsWith("System") || getMethodReturnTypeAsString.StartsWith("System"))
+                       && !getMethod.ReturnType.Name.StartsWith("List");
+            })
+            .ToList();
+
+        return items;
     }
 }
