@@ -141,6 +141,7 @@ public static class TypeExtensions
 
         return result;
     }
+
     /// <summary>
     ///     <para>
     ///         Checks if <paramref name="type1" /> and <paramref name="type2" /> is equal by iterating through all their

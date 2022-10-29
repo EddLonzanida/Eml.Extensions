@@ -210,7 +210,7 @@ public static class DateExtensions
     /// <summary>
     ///     If showMilliseconds is false, will round milliseconds to the nearest seconds.
     /// </summary>
-    public static string GetDuration(this DateTime start, DateTime end, bool showMilliseconds = true)
+    public static string GetDuration(this DateTime start, DateTime end, bool showMilliseconds)
     {
         var elapsedTime = end - start;
 
@@ -228,7 +228,7 @@ public static class DateExtensions
     /// <summary>
     ///     <inheritdoc cref="GetDuration(System.DateTime,System.DateTime,bool)" />
     /// </summary>
-    public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds = true)
+    public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds)
     {
         var start1 = start ?? defaultValue;
         var end2 = end ?? defaultValue;
