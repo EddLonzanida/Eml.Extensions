@@ -161,7 +161,7 @@ public static class LinqExtensions
         Func<T, TKey> keySelector,
         bool includeGroupCountIs1)
     {
-        var duplicateItemsFirstInWins = items.GetUniqueItems(keySelector, where, includeGroupCountIs1: includeGroupCountIs1, true);
+        var duplicateItemsFirstInWins = items.GetUniqueItems(keySelector, where, includeGroupCountIs1: includeGroupCountIs1, false);
 
         return duplicateItemsFirstInWins;
     }
