@@ -1,33 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
+namespace Eml.Extensions;
 
-namespace Eml.Extensions
+/// <summary>
+///     Used by LinqExtensions.
+///     General purpose IEqualityComparer.
+/// </summary>
+public class LambdaEqualityComparer<T> : IEqualityComparer<T>
 {
-    public class LambdaEqualityComparer<T> : IEqualityComparer<T>
+    private readonly Func<T?, T?, bool> lambdaComparer;
+
+    private readonly Func<T?, int> lambdaHash;
+
+    /// <summary>
+    ///     Example:
+    ///     <code language="c#">new LambdaEqualityComparer<TSource></TSource>(<paramref name="lambdaComparer" />)</code>
+    ///     <para>Declaration:</para>
+    ///     <code language="c#">Func&lt;TSource, TSource, bool&gt; <paramref name="lambdaComparer" /></code>
+    /// </summary>
+    public LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer) :
+        this(lambdaComparer, o => 0)
     {
-        private readonly Func<T, T, bool> _lambdaComparer;
+    }
 
-        private readonly Func<T, int> _lambdaHash;
+    private LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer,
+        Func<T?, int> lambdaHash)
+    {
+        this.lambdaComparer = lambdaComparer.CheckNotNull();
+        this.lambdaHash = lambdaHash.CheckNotNull();
+    }
 
-        public LambdaEqualityComparer(Func<T, T, bool> lambdaComparer) :
-            this(lambdaComparer, o => 0)
-        {
-        }
+    public bool Equals(T? x, T? y)
+    {
+        return lambdaComparer(x, y);
+    }
 
-        private LambdaEqualityComparer(Func<T, T, bool> lambdaComparer, Func<T, int> lambdaHash)
-        {
-            _lambdaComparer = lambdaComparer.CheckNotNull(nameof(lambdaComparer));
-            _lambdaHash = lambdaHash.CheckNotNull(nameof(lambdaHash));
-        }
-
-        public bool Equals(T x, T y)
-        {
-            return _lambdaComparer(x, y);
-        }
-
-        public int GetHashCode(T obj)
-        {
-            return _lambdaHash(obj);
-        }
+    public int GetHashCode(T obj)
+    {
+        return lambdaHash(obj);
     }
 }

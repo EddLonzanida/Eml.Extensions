@@ -1,289 +1,412 @@
-﻿#if NETCORE
 using Microsoft.Extensions.DependencyModel;
-#endif
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 
-namespace Eml.Extensions
+namespace Eml.Extensions;
+
+public static class TypeExtensions
 {
-    public static class TypeExtensions
+    public static List<string> GetDifference(this IEnumerable<string> source, IEnumerable<string> target)
     {
-        public static List<string> GetDifference(this IEnumerable<string> source, IEnumerable<string> target)
-        {
-            var diff = target.Except(source).ToList();
+        var diff = target.Except(source).ToList();
 
-            return diff;
-        }
-        public static Assembly GetAssembly(string assemblyName)
-        {
-#if NETFULL
-            return Assembly.Load(assemblyName);
-#endif
-#if NETCORE
-            return Assembly.Load(new AssemblyName(assemblyName));
-#endif
-        }
+        return diff;
+    }
 
-#if NETFULL
-        public static Assembly GetAssembly(this FileInfo fileInfo)
-        {
-            return Assembly.LoadFile(fileInfo.FullName);
-        }
+    public static Assembly GetAssembly(string assemblyName)
+    {
+        return Assembly.Load(new AssemblyName(assemblyName));
+    }
 
-        public static Assembly GetAssemblyFromPath(string path)
-        {
-            var fileInfo = new FileInfo(path);
+    public static string GetBinDirectory<T>()
+    {
+        return Path.GetDirectoryName(typeof(T).Assembly.Location) ?? string.Empty;
+    }
 
-            return fileInfo.GetAssembly();
-        }
+    public static List<Assembly> GetReferencingAssemblies(Func<RuntimeLibrary, bool> whereClause)
+    {
+        var dependencies = DependencyContext.Default.RuntimeLibraries
+            .Where(whereClause);
 
-        /// <summary>
-        /// Search for *.dll 
-        /// </summary>
-        /// <param name="directory"></param>
-        /// <returns></returns>
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory)
-        {
-            var files = Directory.GetFiles(directory.FullName, "*.dll").ToList();
+        return dependencies
+            .Select(r => GetAssembly(r.Name))
+            .Distinct()
+            .ToList();
 
-            return files
-               .Select(GetAssemblyFromPath)
-               .ToList();
-        }
+        // TODO: determine if this is better
+        //return dependencies
+        //    .Select(r => r.GetType().Assembly)
+        //    .Distinct()
+        //    .ToList();
+    }
 
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory, string filePattern)
-        {
-            var files = Directory.GetFiles(directory.FullName, filePattern).ToList();
+    public static List<Assembly> GetReferencingAssemblies(this IReadOnlyCollection<string> startsWithAssemblyPattern)
+    {
+        var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
 
-            return files
-              .Select(GetAssemblyFromPath)
-              .ToList();
-        }
-
-        public static List<Assembly> GetAssembliesFromDirectory(this DirectoryInfo directory, Func<string, bool> whereClause)
-        {
-            var files = Directory.GetFiles(directory.FullName).ToList();
-
-            return files
-                .Where(whereClause)
-                .Select(GetAssemblyFromPath)
-                .ToList();
-        }
-
-        public static string GetBinDirectory()
-        {
-            var binDirectory = Path.GetDirectoryName(System.Reflection.Assembly
-                .GetExecutingAssembly().GetName().CodeBase)?.Replace(@"file:\", string.Empty);
-
-            if (!Directory.Exists(binDirectory))
-            {
-                binDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            }
-
-            return binDirectory;
-        }
-#endif
-#if NETCORE
-        public static string GetBinDirectory<T>()
-        {
-            return Path.GetDirectoryName(typeof(T).Assembly.Location);
-        }
-
-        public static List<Assembly> GetReferencingAssemblies(Func<RuntimeLibrary, bool> whereClause)
-        {
-            var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
-
-            return dependencies.Where(whereClause)
-                .Select(r => GetAssembly(r.Name))
-                .Distinct()
-                .ToList();
-        }
-
-        public static List<Assembly> GetReferencingAssemblies(IReadOnlyCollection<string> startsWithAssemblyPattern)
-        {
-            var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build()
-                .ConvertAll(r => r.ToLower());
-            var referencedAssemblies = withPattern
-                .Select(p => GetReferencingAssemblies(r => r.Name.ToLower().StartsWith(p)))
+        var referencedAssemblies = withPattern
+                .Select(p => GetReferencingAssemblies(r => r.Name.IsWithStart(p)))
                 .SelectMany(assembly => assembly.Select(r => r))
                 .Distinct()
-                ;
+            ;
 
-            return referencedAssemblies.ToList();
-        }
+        return referencedAssemblies.ToList();
+    }
 
-        public static List<Assembly> GetReferencingAssemblies()
+    public static List<Assembly> GetReferencingAssemblies(this IReadOnlyCollection<string> startsWithAssemblyPattern, Func<RuntimeLibrary, bool> whereClause)
+    {
+        var withPattern = new UniqueStringPattern(startsWithAssemblyPattern).Build();
+
+        var referencedAssemblies = withPattern
+                .Select(p => GetReferencingAssemblies(r => r.Name.IsWithStart(p) && whereClause(r)))
+                .SelectMany(assembly => assembly.Select(r => r))
+                .Distinct()
+            ;
+
+        return referencedAssemblies.ToList();
+    }
+
+    public static List<Assembly> GetReferencingAssemblies()
+    {
+        var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
+
+        return dependencies
+            .Select(r => GetAssembly(r.Name))
+            .ToList();
+    }
+
+    public static List<string> GetMemberNames(this Type type)
+    {
+        var members = new List<string>();
+
+        members.AddRange(type.GetPropertyNames());
+        members.AddRange(type.GetMethodNames());
+
+        return members;
+    }
+
+    public static List<string> GetMethodNames(this Type type)
+    {
+        var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
+            .Where(r => !r.IsSpecialName);
+
+        return methods
+            .Select(r => r.GetMethodSignature())
+            .ToList();
+    }
+
+    public static string GetMethodSignature(this MethodInfo mi)
+    {
+        var param = mi.GetParameters()
+            .Select(p => $"{p.ParameterType.Name} {p.Name}")
+            .ToArray();
+
+        var signature = $"{mi.ReturnType.Name} {mi.Name}({string.Join(",", param)})";
+
+        return signature;
+    }
+
+    /// <summary>
+    ///     Uses BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
+    /// </summary>
+    public static List<PropertyInfo> GetPublicProperties(this Type type)
+    {
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+
+        return properties.ToList();
+    }
+
+    public static Dictionary<string, List<HasChangesDto>> HasChanges<T>(this IEnumerable<T> type1, List<T> type2, Func<T, T, bool> comparer, Func<T, string> key, List<string>? exceptProperties = null)
+        where T : class
+    {
+        var result = new Dictionary<string, List<HasChangesDto>>();
+
+        foreach (var left in type1)
         {
-            var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
+            var right = type2.FirstOrDefault(x => comparer(left, x));
 
-            return dependencies
-                .Select(r => GetAssembly(r.Name))
-                .ToList();
-        }
-#endif
+            if (right == null)
+            {
+                continue;
+            }
 
-        public static List<string> GetMemberNames(this Type type)
-        {
-            var members = new List<string>();
+            var hasChanges = left.HasChanges(right, exceptProperties);
 
-            members.AddRange(type.GetPropertyNames());
-            members.AddRange(type.GetMethodNames());
+            if (hasChanges?.Any() ?? false)
+            {
+                var k = key(left);
 
-            return members;
-        }
-
-        public static List<string> GetMethodNames(this Type type)
-        {
-            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-                .Where(r => !r.IsSpecialName);
-
-            return methods
-                .Select(r => r.GetMethodSignature())
-                .ToList();
+                result.Add(k, hasChanges);
+            }
         }
 
-        public static string GetMethodSignature(this MethodInfo mi)
-        {
-            var param = mi.GetParameters()
-                          .Select(p => $"{p.ParameterType.Name} {p.Name}")
-                          .ToArray();
-            var signature = $"{mi.ReturnType.Name} {mi.Name}({string.Join(",", param)})";
+        return result;
+    }
 
-            return signature;
-        }
+    /// <summary>
+    ///     <para>
+    ///         Checks if <paramref name="type1" /> and <paramref name="type2" /> is equal by iterating through all their
+    ///         properties using reflection.
+    ///         Only native type properties are compared.
+    ///     </para>
+    ///     <para>Native types are determined if the name or namespace starts with "System".</para>
+    ///     <para>Complex type properties such as another class, Lists, etc., will be ignored.</para>
+    /// </summary>
+    public static List<HasChangesDto?> HasChanges<T>(this T type1, T type2, List<string>? exceptProperties = null)
+        where T : class
+    {
+        exceptProperties ??= new List<string>();
 
-        /// <summary>
-        /// Uses BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static List<PropertyInfo> GetProperties2(this Type type)
-        {
-            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy);
+        var type1Properties = type1.GetType().GetPublicNativeTypeProperties()
+            .Where(x => !exceptProperties.Contains(x.Name))
+            .ToList();
 
-            return properties.ToList();
-        }
+        var changes = type1Properties.ConvertAll(x =>
+            {
+                var t1Value = x.GetValue(type1, null);
+                var t2Value = x.GetValue(type2, null);
+                var isEqual = true;
 
-        public static List<string> GetPropertyNames(this Type type)
-        {
-            var properties = type.GetProperties2();
+                if (t1Value == null)
+                {
+                    isEqual = t2Value == null;
+                }
+                else
+                {
+                    if (x.PropertyType == typeof(byte[]))
+                    {
+                        var v1 = ((byte[])t1Value).GetString();
+                        var v2 = ((byte[])t2Value!).GetString();
 
-            return properties
-                .Select(property => property.Name)
-                .ToList();
-        }
+                        isEqual = v1.Equals(v2);
+                    }
+                    else
+                    {
+                        isEqual = t1Value.Equals(t2Value);
+                    }
+                }
 
-        public static List<string> GetPropertyNames(this Type type, Func<PropertyInfo, bool> selector)
-        {
-            var properties = type.GetProperties2();
+                if (!isEqual)
+                {
+                    return new HasChangesDto
+                    {
+                        PropertyName = x.Name,
+                        Value1 = t1Value,
+                        Value2 = t2Value
+                    };
+                }
 
-            return properties
-                .Where(selector)
-                .Select(property => property.Name)
-                .ToList();
-        }
+                return null;
+            })
+            .Where(x => x != null)
+            .ToList();
 
-        public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> selector)
-        {
-            return assembly.GetClasses(selector)
-                .Select(type => type.Name)
-                .ToList();
-        }
-        public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
-        {
-            return assemblies.GetClasses(selector)
-                .Select(type => type.Name)
-                .ToList();
-        }
+        return changes;
+    }
 
-        public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> selector)
-        {
-            return assemblies.SelectMany(type => type.GetClasses(selector, true))
-                .ToList();
-        }
+    public static List<string> GetPropertyNames(this Type type)
+    {
+        var properties = type.GetPublicProperties();
 
-        public static List<Type> GetClasses(this Assembly assembly, bool includeAbstract = false)
-        {
-            return includeAbstract ? assembly.GetTypes(type => !type.IsInterface) : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract);
-        }
+        return properties
+            .Select(property => property.Name)
+            .ToList();
+    }
 
-        public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> selector, bool includeAbstract = false)
-        {
-            return includeAbstract
-                ? assembly.GetTypes(type => !type.IsInterface && selector(type))
-                : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && selector(type));
-        }
+    public static List<string> GetPropertyNames(this Type type, Func<PropertyInfo, bool> whereClause)
+    {
+        var properties = type.GetPublicProperties();
 
-        public static List<string> GetInterfaceNames(this Assembly assembly, string nameSpace)
-        {
-            return assembly.GetTypes(nameSpace, type => type.IsInterface && !type.IsGenericType)
-                .Select(type => type.Name)
-                .ToList();
-        }
+        return properties
+            .Where(whereClause)
+            .Select(property => property.Name)
+            .ToList();
+    }
 
-        public static List<string> GetInterfaceNames(this Assembly assembly, Func<Type, bool> selector)
-        {
-            return assembly.GetInterfaces(selector)
-                .Select(type => type.Name)
-                .ToList();
-        }
+    public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> whereClause, Func<string, string> valueSelector)
+    {
+        return assembly.GetClasses(whereClause)
+            .Select(type => valueSelector(type.Name))
+            .ToList();
+    }
 
-        public static List<string> GetInterfaceNames(this Assembly assembly)
-        {
-            return assembly.GetInterfaces()
-                .Select(type => type.Name)
-                .ToList();
-        }
+    public static List<string> GetClassNames(this Assembly assembly, Func<Type, bool> whereClause)
+    {
+        return assembly.GetClasses(whereClause)
+            .Select(type => type.Name)
+            .ToList();
+    }
 
-        public static List<Type> GetInterfaces(this Assembly assembly, Func<Type, bool> selector)
-        {
-            return assembly.GetTypes(type => type.IsInterface && selector(type) && !type.IsGenericType);
-        }
+    public static List<string> GetClassNames(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
+    {
+        return assemblies.GetClasses(whereClause)
+            .Select(type => type.Name)
+            .ToList();
+    }
 
-        public static List<Type> GetInterfaces(this Assembly assembly)
-        {
-            return assembly.GetTypes(type => type.IsInterface && !type.IsGenericType);
-        }
+    public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause, bool includeAbstract = false)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetClasses(whereClause, includeAbstract))
+            .ToList();
+    }
 
-        public static List<Type> GetTypes(this Assembly assembly, string nameSpace, Func<Type, bool> selector)
-        {
-            return assembly.GetTypes()
-                           .Where(type => string.Equals(type.Namespace, nameSpace, StringComparison.Ordinal)
-                                          && type.IsPublic
-                                          && selector(type))
-                           .ToList();
-        }
+    public static List<Type> GetClasses(this IEnumerable<Assembly> assemblies, bool includeAbstract = false)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetClasses(includeAbstract))
+            .ToList();
+    }
 
-        public static List<Type> GetTypes(this Assembly assembly, Func<Type, bool> selector)
-        {
-            var types = assembly.GetTypes();
+    public static List<Type> GetClasses(this Assembly assembly, bool includeAbstract = false)
+    {
+        return includeAbstract
+            ? assembly.GetTypes(type => !type.IsInterface)
+            : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract);
+    }
 
-            return types
-                .Where(type => selector(type) && type.IsPublic)
-                .ToList();
-        }
+    public static List<Type> GetClasses(this Assembly assembly, Func<Type, bool> whereClause, bool includeAbstract = false)
+    {
+        return includeAbstract
+            ? assembly.GetTypes(type => !type.IsInterface && whereClause(type))
+            : assembly.GetTypes(type => !type.IsInterface && !type.IsAbstract && whereClause(type));
+    }
 
-        public static T GetPropertyAttribute<T>(this PropertyInfo prop)
-            where T : class
-        {
-            return prop.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
-        }
+    public static List<string> GetInterfaceNames(this Assembly assembly, string nameSpace)
+    {
+        return assembly.GetTypes(nameSpace, type => type.IsInterface)
+            .Select(type => type.Name)
+            .ToList();
+    }
 
-        public static T GetClassAttribute<T>(this Type type)
-            where T : class
-        {
-            return type.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
-        }
+    public static List<string> GetInterfaceNames(this Assembly assembly, Func<Type, bool> whereClause)
+    {
+        return assembly.GetInterfaces(whereClause)
+            .Select(type => type.Name)
+            .ToList();
+    }
 
-        public static string ConstructTestMessageForMissingArrays<T>(this IEnumerable<T> items, string msg)
-        {
-            var enumerable = items as T[] ?? items.ToArray();
+    public static List<string> GetInterfaceNames(this Assembly assembly)
+    {
+        return assembly.GetInterfaces()
+            .Select(type => type.Name)
+            .ToList();
+    }
 
-            return $"{Environment.NewLine}({enumerable.Count()}){msg}: {Environment.NewLine}    {string.Join(Environment.NewLine + "    ", enumerable.ToArray())}{Environment.NewLine}";
-        }
+    public static List<Type> GetInterfaces(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetInterfaces(whereClause))
+            .ToList();
+    }
+
+    public static List<Type> GetInterfaces(this IEnumerable<Assembly> assemblies)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetInterfaces())
+            .ToList();
+    }
+
+    public static List<Type> GetInterfaces(this Assembly assembly, Func<Type, bool> whereClause)
+    {
+        return assembly.GetTypes(type => type.IsInterface && whereClause(type));
+    }
+
+    public static List<Type> GetInterfaces(this Assembly assembly)
+    {
+        return assembly.GetTypes(type => type.IsInterface);
+    }
+
+    public static List<Type> GetTypes(this Assembly assembly, string nameSpace, Func<Type, bool> whereClause)
+    {
+        return assembly.GetTypes()
+            .Where(type => string.Equals(type.Namespace, nameSpace, StringComparison.Ordinal)
+                           && type.IsPublic
+                           && whereClause(type))
+            .ToList();
+    }
+
+    public static List<Type> GetTypes(this Assembly assembly, Func<Type, bool> whereClause)
+    {
+        var types = assembly.GetTypes();
+
+        return types
+            .Where(type => whereClause(type) && type.IsPublic)
+            .ToList();
+    }
+
+    public static T? GetPropertyAttribute<T>(this PropertyInfo prop)
+        where T : class
+    {
+        return prop.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+    }
+
+    public static T? GetClassAttribute<T>(this Type type)
+        where T : class
+    {
+        return type.GetCustomAttributes(typeof(T), false).FirstOrDefault() as T;
+    }
+
+    /// <summary>
+    ///     TODO: Complete this!!
+    /// </summary>
+    public static bool IsSimpleType<T>(this Type type)
+    {
+        return
+            type.IsValueType ||
+            type.IsPrimitive ||
+            Convert.GetTypeCode(type) != TypeCode.Object ||
+            new[]
+            {
+                typeof(string),
+                typeof(int),
+                typeof(bool),
+                typeof(decimal),
+                typeof(float),
+                typeof(DateTime),
+                typeof(DateTimeOffset),
+                typeof(TimeSpan),
+                typeof(Guid)
+            }.Contains(type);
+    }
+
+    public static List<Type> GetStaticClasses(this IEnumerable<Assembly> assemblies, Func<Type, bool> whereClause)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetTypes(type => whereClause(type)
+                                                                           && type.IsClass
+                                                                           && type.IsSealed
+                                                                           && type.IsAbstract))
+            .ToList();
+    }
+
+    public static List<Type> GetStaticClasses(this IEnumerable<Assembly> assemblies)
+    {
+        return assemblies.SelectMany(assembly => assembly.GetTypes(type => type.IsClass
+                                                                           && type.IsSealed
+                                                                           && type.IsAbstract))
+            .ToList();
+    }
+
+    /// <summary>
+    ///     Get all public properties except complex types.
+    /// </summary>
+    public static List<PropertyInfo> GetPublicNativeTypeProperties(this Type type)
+    {
+        var properties = type.GetPublicProperties();
+
+        var items = properties
+            .Where(x =>
+            {
+                var getMethod = x.GetMethod;
+
+                if (getMethod == null)
+                {
+                    return false;
+                }
+
+                var getMethodAsString = getMethod.ToString() ?? string.Empty;
+                var getMethodReturnTypeAsString = getMethod.ReturnType.FullName ?? string.Empty;
+
+                return (getMethodAsString.StartsWith("System") || getMethodReturnTypeAsString.StartsWith("System"))
+                       && !getMethod.ReturnType.Name.StartsWith("List");
+            })
+            .ToList();
+
+        return items;
     }
 }

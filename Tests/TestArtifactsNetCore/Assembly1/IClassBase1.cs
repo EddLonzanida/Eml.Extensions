@@ -1,6 +1,5 @@
-﻿namespace Assembly1
+﻿namespace Assembly1;
+
+public interface IClassBase1
 {
-    public interface IClassBase1
-    {
-    }
 }

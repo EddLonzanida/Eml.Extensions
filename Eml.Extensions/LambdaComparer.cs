@@ -1,27 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Eml.Extensions;
 
-namespace Eml.Extensions
+public enum eSortFlag
 {
-    public enum eSortFlag
+    LessThan = -1,
+    Equal = 0,
+    GreaterThan = 1
+}
+
+public class LambdaComparer<T> : IComparer<T>
+{
+    private readonly Func<T?, T?, int> lambdaComparer;
+
+    public LambdaComparer(Func<T?, T?, int> lambdaComparer)
     {
-        LessThan = -1,
-        Equal = 0,
-        GreaterThan = 1
+        this.lambdaComparer = lambdaComparer.CheckNotNull();
     }
 
-    public class LambdaComparer<T> : IComparer<T>
+    public int Compare(T? x, T? y)
     {
-        private readonly Func<T, T, int> _lambdaComparer;
-
-        public LambdaComparer(Func<T, T, int> lambdaComparer)
+        if (x == null && y == null)
         {
-            _lambdaComparer = lambdaComparer.CheckNotNull(nameof(lambdaComparer));
+            return (int)eSortFlag.Equal;
         }
 
-        public int Compare(T x, T y)
+        if (x != null && y == null)
         {
-            return _lambdaComparer(x, y);
+            return (int)eSortFlag.GreaterThan;
         }
+
+        if (x == null && y != null)
+        {
+            return (int)eSortFlag.LessThan;
+        }
+
+        return lambdaComparer(x, y);
     }
 }

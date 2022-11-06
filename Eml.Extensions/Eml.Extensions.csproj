@@ -1,38 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-      <TargetFrameworks>net462;net47;net471;net472;netstandard2.0</TargetFrameworks>
-      <Description>Collection of useful Extensions gathered along the way.</Description>
-      <Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
-      <PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
-      <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-      <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-      <Authors>EmL Solutions</Authors>
-      <Company>EmL Solutions</Company>
-      <PackageTags>EmL Extensions</PackageTags>
-      <NoWarn>1701;1702;1705;CS1591</NoWarn>
-      <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
-      <LangVersion>latest</LangVersion>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Description>Collection of useful Extensions gathered along the way.</Description>
+		<Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
+		<PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Authors>EmL Solutions</Authors>
+		<Company>EmL Solutions</Company>
+		<PackageTags>EmL Extensions</PackageTags>
+		<NoWarn>1701;1702;1705;CS1591</NoWarn>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <Choose>
-    <When Condition="'$(TargetFramework)' == 'net462' or '$(TargetFramework)' == 'net47' or '$(TargetFramework)' == 'net471' or '$(TargetFramework)' == 'net472'">
-      <PropertyGroup>
-        <DefineConstants>NETFULL</DefineConstants>
-      </PropertyGroup>
-      <ItemGroup>
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <Choose>
-        <When Condition="'$(TargetFramework)' == 'netcoreapp2.1' or '$(TargetFramework)' == 'netcoreapp2.2' or '$(TargetFramework)' == 'netstandard2.0'">
-          <PropertyGroup>
-            <DefineConstants>NETCORE</DefineConstants>
-          </PropertyGroup>
-          <ItemGroup>
-            <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
-          </ItemGroup>
-        </When>
-      </Choose>
-    </Otherwise>
-  </Choose> 
+	<Choose>
+		<When Condition=" '$(Configuration)'=='Release' ">
+			<PropertyGroup>
+				<SignAssembly>true</SignAssembly>
+				<DelaySign>false</DelaySign>
+				<AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
+			</PropertyGroup>
+		</When>
+	</Choose>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
 </Project>

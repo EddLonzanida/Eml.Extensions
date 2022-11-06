@@ -1,29 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
-    <IsPackable>false</IsPackable>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<IsPackable>false</IsPackable>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Shouldly" Version="3.0.2" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<!--Fix Error	CS5001	Program does not contain a static 'Main' method suitable for an entry point	Trackinator.Api.Tests.Integration-->
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
+		<PackageReference Include="Shouldly" Version="4.1.0" />
+		<PackageReference Include="xunit" Version="2.4.2" />
+		<PackageReference Include="xunit.runner.console" Version="2.4.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Eml.Extensions\Eml.Extensions.csproj" />
-    <ProjectReference Include="..\TestArtifactsNetCore\Assembly1\Assembly1.csproj" />
-    <ProjectReference Include="..\TestArtifactsNetCore\Assembly2\Assembly2.csproj" />
-    <ProjectReference Include="..\TestArtifactsNetCore\EmlSolutions\EmlSolutions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Eml.Extensions\Eml.Extensions.csproj" />
+		<ProjectReference Include="..\TestArtifactsNetCore\Assembly1\Assembly1.csproj" />
+		<ProjectReference Include="..\TestArtifactsNetCore\Assembly2\Assembly2.csproj" />
+		<ProjectReference Include="..\TestArtifactsNetCore\EmlSolutions\EmlSolutions.csproj" />
+	</ItemGroup>
 
 </Project>
