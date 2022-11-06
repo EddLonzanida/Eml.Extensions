@@ -1,7 +1,7 @@
-﻿namespace Eml.Extensions;
+namespace Eml.Extensions;
 
 /// <summary>
-///     Used by <see cref="TypeExtensions.HasChanges{T}" />
+///     Used by <see cref="TypeExtensions.HasChanges{T}(T,T,List{string}?)" />
 /// </summary>
 public class HasChangesDto
 {
