@@ -131,7 +131,7 @@ public static class TypeExtensions
 
             var hasChanges = left.HasChanges(right, exceptProperties);
 
-            if (hasChanges?.Any() ?? false)
+            if (hasChanges.Any())
             {
                 var k = key(left);
 
@@ -151,7 +151,7 @@ public static class TypeExtensions
     ///     <para>Native types are determined if the name or namespace starts with "System".</para>
     ///     <para>Complex type properties such as another class, Lists, etc., will be ignored.</para>
     /// </summary>
-    public static List<HasChangesDto?> HasChanges<T>(this T type1, T type2, List<string>? exceptProperties = null)
+    public static List<HasChangesDto> HasChanges<T>(this T type1, T type2, List<string>? exceptProperties = null)
         where T : class
     {
         exceptProperties ??= new List<string>();
@@ -164,7 +164,7 @@ public static class TypeExtensions
             {
                 var t1Value = x.GetValue(type1, null);
                 var t2Value = x.GetValue(type2, null);
-                var isEqual = true;
+                bool isEqual;
 
                 if (t1Value == null)
                 {
@@ -198,6 +198,7 @@ public static class TypeExtensions
                 return null;
             })
             .Where(x => x != null)
+            .Select(x => x ?? new HasChangesDto()) // added this bec IDE is complaining
             .ToList();
 
         return changes;
