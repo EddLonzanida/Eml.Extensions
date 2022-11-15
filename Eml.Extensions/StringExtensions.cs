@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -18,7 +19,7 @@ public static class StringExtensions
     /// <summary>
     ///     Shorthand for string.IsNullOrWhiteSpace
     /// </summary>
-    public static bool IsNullOrWhiteSpace(this string source)
+    public static bool IsNullOrWhiteSpace(this string? source)
     {
         return string.IsNullOrWhiteSpace(source);
     }
@@ -26,7 +27,7 @@ public static class StringExtensions
     /// <summary>
     ///     Removes the trimValue before comparing. Case insensitive comparison.
     /// </summary>
-    public static bool IsEqualTo(this string source, string value, string trimValue)
+    public static bool IsEqualTo(this string? source, string? value, string trimValue)
     {
         return source?.Replace(trimValue, string.Empty)
             .IsEqualTo(value?.Replace(trimValue, string.Empty)) ?? false;
@@ -35,7 +36,7 @@ public static class StringExtensions
     /// <summary>
     ///     Case insensitive comparison.
     /// </summary>
-    public static bool IsWithStart(this string source, string value)
+    public static bool IsWithStart(this string? source, string value)
     {
         return source?.StartsWith(value, true, null) ?? false;
     }
@@ -61,7 +62,7 @@ public static class StringExtensions
     /// <summary>
     ///     Find and replace using regexPattern.
     /// </summary>
-    public static string FindReplaceUsingRegEx(this string body, string regexPattern, string value)
+    public static string FindReplaceUsingRegEx(this string body, [StringSyntax(StringSyntaxAttribute.Regex)] string regexPattern, string value)
     {
         var tmpBody = Regex.Replace(body, regexPattern, value);
 

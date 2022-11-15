@@ -1,15 +1,17 @@
-﻿namespace Eml.Extensions;
+using System.Runtime.CompilerServices;
+
+namespace Eml.Extensions;
 
 public static class Check
 {
     /// <summary>
     ///     Throws an ArgumentNullException if <paramref name="value" /> is null.
     /// </summary>
-    public static T CheckNotNull<T>(this T value)
+    public static T CheckNotNull<T>(this T value, [CallerArgumentExpression(nameof(value))] string parameterName = "")
     {
         if (value == null)
         {
-            throw new ArgumentNullException(nameof(value));
+            throw new ArgumentNullException(parameterName);
         }
 
         return value;
@@ -18,7 +20,7 @@ public static class Check
     /// <summary>
     ///     Throws an ArgumentNullException if <paramref name="value" /> is null, empty or whitespace.
     /// </summary>
-    public static string CheckNotEmpty(this string value, string parameterName)
+    public static string CheckNotEmpty(this string? value, [CallerArgumentExpression(nameof(value))] string parameterName = "")
     {
         if (string.IsNullOrWhiteSpace(value))
         {
