@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Eml.Extensions;
@@ -99,7 +100,7 @@ public static class DateExtensions
         return null;
     }
 
-    public static DateTime? ToDateTime(this string dateAsString, string format)
+    public static DateTime? ToDateTime(this string dateAsString, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string format)
     {
         if (dateAsString.IsNullOrWhiteSpace())
         {
@@ -111,7 +112,7 @@ public static class DateExtensions
             return date;
         }
 
-        return DateTime.ParseExact(dateAsString ?? string.Empty, format, CultureInfo.InvariantCulture);
+        return DateTime.ParseExact(dateAsString, format, CultureInfo.InvariantCulture);
     }
 
     /// <summary>
@@ -180,7 +181,7 @@ public static class DateExtensions
     }
 
     /// <summary>
-    ///     <inheritdoc cref="ToDate(System.DateTime)" />
+    ///     <inheritdoc cref="ToDate(DateTime)" />
     /// </summary>
     public static string ToDate(this DateTime? date1)
     {
@@ -226,7 +227,7 @@ public static class DateExtensions
     }
 
     /// <summary>
-    ///     <inheritdoc cref="GetDuration(System.DateTime,System.DateTime,bool)" />
+    ///     <inheritdoc cref="GetDuration(DateTime,DateTime,bool)" />
     /// </summary>
     public static string GetDuration(this DateTime? start, DateTime? end, DateTime defaultValue, bool showMilliseconds)
     {
