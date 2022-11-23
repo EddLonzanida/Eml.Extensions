@@ -11,7 +11,7 @@ public static class LinqExtensions
     /// </summary>
     public static List<TSource> Except<TSource>(this IEnumerable<TSource> mainList,
         IEnumerable<TSource> listToRemove,
-        Func<TSource?, TSource?, bool> comparer)
+        Func<TSource, TSource, bool> comparer)
     {
         return mainList.Except(listToRemove, new LambdaEqualityComparer<TSource>(comparer)).ToList();
     }
@@ -23,7 +23,7 @@ public static class LinqExtensions
     /// </summary>
     public static List<TSource> Intersect<TSource>(this IEnumerable<TSource> mainList,
         IEnumerable<TSource> listToIntersect,
-        Func<TSource?, TSource?, bool> comparer)
+        Func<TSource, TSource, bool> comparer)
     {
         return mainList.Intersect(listToIntersect, new LambdaEqualityComparer<TSource>(comparer)).ToList();
     }
