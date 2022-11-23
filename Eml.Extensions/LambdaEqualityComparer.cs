@@ -6,9 +6,9 @@ namespace Eml.Extensions;
 /// </summary>
 public class LambdaEqualityComparer<T> : IEqualityComparer<T>
 {
-    private readonly Func<T?, T?, bool> lambdaComparer;
+    private readonly Func<T, T, bool> lambdaComparer;
 
-    private readonly Func<T?, int> lambdaHash;
+    private readonly Func<T, int> lambdaHash;
 
     /// <summary>
     ///     Example:
@@ -16,13 +16,13 @@ public class LambdaEqualityComparer<T> : IEqualityComparer<T>
     ///     <para>Declaration:</para>
     ///     <code language="c#">Func&lt;TSource, TSource, bool&gt; <paramref name="lambdaComparer" /></code>
     /// </summary>
-    public LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer) :
+    public LambdaEqualityComparer(Func<T, T, bool> lambdaComparer) :
         this(lambdaComparer, o => 0)
     {
     }
 
-    private LambdaEqualityComparer(Func<T?, T?, bool> lambdaComparer,
-        Func<T?, int> lambdaHash)
+    private LambdaEqualityComparer(Func<T, T, bool> lambdaComparer,
+        Func<T, int> lambdaHash)
     {
         this.lambdaComparer = lambdaComparer.CheckNotNull();
         this.lambdaHash = lambdaHash.CheckNotNull();
@@ -30,7 +30,7 @@ public class LambdaEqualityComparer<T> : IEqualityComparer<T>
 
     public bool Equals(T? x, T? y)
     {
-        return lambdaComparer(x, y);
+        return y != null && x != null && lambdaComparer(x, y);
     }
 
     public int GetHashCode(T obj)

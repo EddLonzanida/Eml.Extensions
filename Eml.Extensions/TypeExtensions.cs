@@ -24,8 +24,8 @@ public static class TypeExtensions
 
     public static List<Assembly> GetReferencingAssemblies(Func<RuntimeLibrary, bool> whereClause)
     {
-        var dependencies = DependencyContext.Default.RuntimeLibraries
-            .Where(whereClause);
+        var dependencies = DependencyContext.Default?.RuntimeLibraries
+            .Where(whereClause) ?? new List<RuntimeLibrary>();
 
         return dependencies
             .Select(r => GetAssembly(r.Name))
@@ -67,11 +67,11 @@ public static class TypeExtensions
 
     public static List<Assembly> GetReferencingAssemblies()
     {
-        var dependencies = DependencyContext.Default.RuntimeLibraries.ToList();
+        var dependencies = DependencyContext.Default?.RuntimeLibraries.ToList();
 
-        return dependencies
+        return dependencies?
             .Select(r => GetAssembly(r.Name))
-            .ToList();
+            .ToList() ?? new List<Assembly>();
     }
 
     public static List<string> GetMemberNames(this Type type)
