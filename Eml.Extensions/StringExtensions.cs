@@ -591,6 +591,14 @@ public static class StringExtensions
 
         var stackTraceSplit = (exception.InnerException?.StackTrace ?? exception.StackTrace)?.Split(Environment.NewLine);
         var callSite = stackTraceSplit?.FirstOrDefault(x => Regex.IsMatch(x, regExPattern, RegexOptions.IgnoreCase))?.Trim() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(callSite))
+        {
+            //use exception.StackTrace
+            stackTraceSplit = exception.StackTrace?.Split(Environment.NewLine);
+            callSite = stackTraceSplit?.FirstOrDefault(x => Regex.IsMatch(x, regExPattern, RegexOptions.IgnoreCase))?.Trim() ?? string.Empty;
+        }
+
         var aCallSite = callSite.Split(" in ");
 
         callSite = aCallSite.LastOrDefault()?.Trim() ?? string.Empty;
