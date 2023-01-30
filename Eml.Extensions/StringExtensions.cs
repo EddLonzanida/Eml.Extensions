@@ -500,8 +500,10 @@ public static class StringExtensions
     ///         <see cref="Formatting.Indented" />
     ///     </para>
     ///     <code>if (!usePascalCase) new <see cref="CamelCasePropertyNamesContractResolver" />()</code>
+    ///     <para> useDateTimeZoneHandlingUtc will add timezone(:00Z) to dates. Ex: 2023-02-27T16:00:00Z. This will allow the correct date interpretations in javascript clients like Angular.</para>
+    ///     <code>if (useDateTimeZoneHandlingUtc) options.DateTimeZoneHandling = DateTimeZoneHandling.Utc;</code>
     /// </summary>
-    public static void SetDefaultOptions(this JsonSerializerSettings options, bool showNullValues = false, bool indented = true, bool usePascalCase = false)
+    public static void SetDefaultOptions(this JsonSerializerSettings options, bool showNullValues = false, bool indented = true, bool usePascalCase = false, bool useDateTimeZoneHandlingUtc = true)
     {
         if (!showNullValues)
         {
@@ -518,6 +520,11 @@ public static class StringExtensions
         if (!usePascalCase)
         {
             options.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        }
+
+        if (useDateTimeZoneHandlingUtc)
+        {
+            options.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
         }
     }
 
