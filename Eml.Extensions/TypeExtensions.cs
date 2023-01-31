@@ -410,4 +410,14 @@ public static class TypeExtensions
 
         return items;
     }
+
+    /// <summary>
+    /// <code>var typeName = type.DeclaringType?.Name ?? type.Name;</code>
+    /// </summary>
+    public static string GetTypeName(this Type type)
+    {
+        var typeName = type.DeclaringType?.Name ?? type.Name;
+
+        return typeName;
+    }
 }
