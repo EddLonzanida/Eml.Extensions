@@ -115,14 +115,14 @@ public static class TypeExtensions
         return properties.ToList();
     }
 
-    public static Dictionary<string, List<HasChangesDto>> HasChanges<T>(this IEnumerable<T> type1, List<T> type2, Func<T, T, bool> comparer, Func<T, string> key, List<string>? exceptProperties = null)
+    public static Dictionary<string, List<HasChangesDto>> HasChanges<T>(this IEnumerable<T> existingItems, List<T> incomingItems, Func<T, T, bool> comparer, Func<T, string> key, List<string>? exceptProperties = null)
         where T : class
     {
         var result = new Dictionary<string, List<HasChangesDto>>();
 
-        foreach (var left in type1)
+        foreach (var left in existingItems)
         {
-            var right = type2.FirstOrDefault(x => comparer(left, x));
+            var right = incomingItems.FirstOrDefault(x => comparer(left, x));
 
             if (right == null)
             {
@@ -144,26 +144,26 @@ public static class TypeExtensions
 
     /// <summary>
     ///     <para>
-    ///         Checks if <paramref name="type1" /> and <paramref name="type2" /> is equal by iterating through all their
+    ///         Checks if <paramref name="existingItem" /> and <paramref name="incomingItem" /> is equal by iterating through all their
     ///         properties using reflection.
     ///         Only native type properties are compared.
     ///     </para>
     ///     <para>Native types are determined if the name or namespace starts with "System".</para>
     ///     <para>Complex type properties such as another class, Lists, etc., will be ignored.</para>
     /// </summary>
-    public static List<HasChangesDto> HasChanges<T>(this T type1, T type2, List<string>? exceptProperties = null)
+    public static List<HasChangesDto> HasChanges<T>(this T existingItem, T incomingItem, List<string>? exceptProperties = null)
         where T : class
     {
         exceptProperties ??= new List<string>();
 
-        var type1Properties = type1.GetType().GetPublicNativeTypeProperties()
+        var type1Properties = existingItem.GetType().GetPublicNativeTypeProperties()
             .Where(x => !exceptProperties.Contains(x.Name))
             .ToList();
 
         var changes = type1Properties.ConvertAll(x =>
             {
-                var t1Value = x.GetValue(type1, null);
-                var t2Value = x.GetValue(type2, null);
+                var t1Value = x.GetValue(existingItem, null);
+                var t2Value = x.GetValue(incomingItem, null);
                 bool isEqual;
 
                 if (t1Value == null)
@@ -190,8 +190,8 @@ public static class TypeExtensions
                     return new HasChangesDto
                     {
                         PropertyName = x.Name,
-                        Value1 = t1Value,
-                        Value2 = t2Value
+                        ExistingValue = t1Value,
+                        IncomingValue = t2Value
                     };
                 }
 
