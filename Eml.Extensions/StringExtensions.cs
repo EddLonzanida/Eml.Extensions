@@ -355,7 +355,9 @@ public static class StringExtensions
     /// </summary>
     public static string TrimRight(this string text, string tail)
     {
-        var index = text.IndexOf(tail, StringComparison.CurrentCultureIgnoreCase);
+        text = text.Replace($"{tail}{tail}", tail);
+
+        var index = text.LastIndexOf(tail, StringComparison.CurrentCultureIgnoreCase);
 
         if (index > 0)
         {
