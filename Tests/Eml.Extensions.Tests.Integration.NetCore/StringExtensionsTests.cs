@@ -1,4 +1,4 @@
-﻿using Shouldly;
+using Shouldly;
 using Xunit;
 
 namespace Eml.Extensions.Tests.Integration.NetCore;
@@ -90,6 +90,7 @@ public class StringExtensionsTests
     [InlineData("IntellisenseCountConfigParser", "Config", "IntellisenseCount")]
     [InlineData("IntellisenseCountConfigParser", "config", "IntellisenseCount")]
     [InlineData("IntellisenseCountConfigParser", "ConfigParser", "IntellisenseCount")]
+    [InlineData("ClassDataNameSpaceClassData", "ClassData", "ClassDataNameSpace")]
     public void TrimRight_ShouldRemoveLastString(string sut, string trim, string expectedResult)
     {
         sut.TrimRight(trim).ShouldBe(expectedResult);
