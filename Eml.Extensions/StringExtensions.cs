@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -624,5 +626,61 @@ public static class StringExtensions
         var errorMessage = exception.InnerException?.Message ?? exception.Message;
 
         return errorMessage;
+    }
+
+    /// <summary>
+    /// Convert <typeparamref name="T"/> into an array of <see cref="KeyValuePair"/>.
+    /// </summary>
+    public static IDictionary<string, string>? ToKeyValues<T>(this T? metaToken)
+        where T : class
+    {
+        if (metaToken == null)
+        {
+            return null;
+        }
+
+        // set serializer options
+        var serializer = new JsonSerializer
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver()
+        };
+
+        if (metaToken is not JToken token)
+        {
+            return ToKeyValues(JObject.FromObject(metaToken, serializer));
+        }
+
+        if (token.HasValues)
+        {
+            var contentData = new Dictionary<string, string>();
+
+            foreach (var child in token.Children().ToList())
+            {
+                var childContent = child.ToKeyValues();
+
+                if (childContent != null)
+                {
+                    contentData = contentData.Concat(childContent)
+                        .ToDictionary(k => k.Key, v => v.Value);
+                }
+            }
+
+            return contentData;
+        }
+
+        var jValue = token as JValue;
+
+        if (jValue?.Value == null)
+        {
+            return null;
+        }
+
+        var value = jValue.Type == JTokenType.Date
+            ? jValue.ToString("o", CultureInfo.InvariantCulture)
+            : jValue.ToString(CultureInfo.InvariantCulture);
+
+        return new Dictionary<string, string> { { token.Path, value } };
     }
 }
