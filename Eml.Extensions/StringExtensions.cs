@@ -257,9 +257,9 @@ public static class StringExtensions
             { "belief", "beliefs" }
         };
 
-        if (exceptions.ContainsKey(wordLowered))
+        if (exceptions.TryGetValue(wordLowered, out var pluralize))
         {
-            return exceptions[wordLowered];
+            return pluralize;
         }
 
         // If it's already pluralized
@@ -504,10 +504,17 @@ public static class StringExtensions
     ///         <see cref="Formatting.Indented" />
     ///     </para>
     ///     <code>if (!usePascalCase) new <see cref="CamelCasePropertyNamesContractResolver" />()</code>
-    ///     <para> useDateTimeZoneHandlingUtc will add timezone(:00Z) to dates. Ex: 2023-02-27T16:00:00Z. This will allow the correct date interpretations in javascript clients like Angular.</para>
+    ///     <para>
+    ///         useDateTimeZoneHandlingUtc will add timezone(:00Z) to dates. Ex: 2023-02-27T16:00:00Z. This will allow the
+    ///         correct date interpretations in javascript clients like Angular.
+    ///     </para>
     ///     <code>if (useDateTimeZoneHandlingUtc) options.DateTimeZoneHandling = DateTimeZoneHandling.Utc;</code>
     /// </summary>
-    public static void SetDefaultOptions(this JsonSerializerSettings options, bool showNullValues = false, bool indented = true, bool usePascalCase = false, bool useDateTimeZoneHandlingUtc = true)
+    public static void SetDefaultOptions(this JsonSerializerSettings options,
+        bool showNullValues = false,
+        bool indented = true,
+        bool usePascalCase = false,
+        bool useDateTimeZoneHandlingUtc = true)
     {
         if (!showNullValues)
         {
@@ -553,7 +560,7 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Calls Convert.ToHexString(byteArray) and prefix with 0x.
+    ///     Calls Convert.ToHexString(byteArray) and prefix with 0x.
     /// </summary>
     public static string GetString(this byte[]? byteArray, bool ignoreNull)
     {
@@ -573,7 +580,7 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// <inheritdoc cref="GetString(byte[],bool)"/>
+    ///     <inheritdoc cref="GetString(byte[],bool)" />
     /// </summary>
     public static string GetString(this byte[]? byteArray)
     {
@@ -581,9 +588,8 @@ public static class StringExtensions
     }
 
     /// <summary>
-    ///     <para>Used to get the callsite for Logging purposes.</para>
+    ///     <inheritdoc cref="GetCallSite2" />
     ///     <para>Will search for files within the specified <paramref name="applicationRootNamespace" />.</para>
-    ///     <para>Will check InnerException first.</para>
     ///     <para>Example:</para>
     ///     <code language="c#">
     ///      var callSite = e.GetCallSite(AppConstants.ApplicationRootNamespace, new[] { "NuGets", "Helpers", "Extensions" });
@@ -593,6 +599,35 @@ public static class StringExtensions
     {
         var regExPattern = $@".*[\\\/]{applicationRootNamespace}\..*";
 
+        return exception.GetCallSite2(regExPattern, excludedPaths);
+    }
+
+    /// <summary>
+    ///     <inheritdoc cref="GetCallSite2" />
+    ///     <para>Will search for files within the specified <paramref name="applicationRootNamespaces" />.</para>
+    ///     <para>Example:</para>
+    ///     <code language="c#">
+    ///      var callSite = e.GetCallSite( new[] { AppConstants.ApplicationRootNamespace, "Ngi", "HttpTriggers" } , new[] { "NuGets", "Helpers", "Extensions" });
+    ///     </code>
+    /// </summary>
+    public static string GetCallSite(this Exception exception, string[] applicationRootNamespaces, string[]? excludedPaths = null)
+    {
+        var rootNamespaces = applicationRootNamespaces.ToDelimitedString("|");
+        var regExPattern = $@".*[\\\/]({rootNamespaces})\..*";
+
+        return exception.GetCallSite2(regExPattern, excludedPaths);
+    }
+
+    /// <summary>
+    ///     <para>Used to get the callsite for Logging purposes.</para>
+    ///     <para>Will check InnerException first.</para>
+    /// </summary>
+    /// <param name="exception"></param>
+    /// <param name="regExPattern"></param>
+    /// <param name="excludedPaths"></param>
+    /// <returns></returns>
+    private static string GetCallSite2(this Exception exception, string regExPattern, string[]? excludedPaths = null)
+    {
         if (excludedPaths is { Length: > 0 })
         {
             var excludedPathsAsString = excludedPaths.ToDelimitedString("|");
@@ -629,7 +664,7 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Convert <typeparamref name="T"/> into an array of <see cref="KeyValuePair"/>.
+    ///     Convert <typeparamref name="T" /> into an array of <see cref="KeyValuePair" />.
     /// </summary>
     public static IDictionary<string, string>? ToKeyValues<T>(this T? metaToken)
         where T : class
