@@ -597,7 +597,7 @@ public static class StringExtensions
     /// </summary>
     public static string GetCallSite(this Exception exception, string applicationRootNamespace, string[]? excludedPaths = null)
     {
-        var regExPattern = $@".*[\\\/]{applicationRootNamespace}\..*";
+        var regExPattern = $@".*[\\\/]*{applicationRootNamespace}\..*";
 
         return exception.GetCallSite2(regExPattern, excludedPaths);
     }
@@ -613,7 +613,7 @@ public static class StringExtensions
     public static string GetCallSite(this Exception exception, string[] applicationRootNamespaces, string[]? excludedPaths = null)
     {
         var rootNamespaces = applicationRootNamespaces.ToDelimitedString("|");
-        var regExPattern = $@".*[\\\/]({rootNamespaces})\..*";
+        var regExPattern = $@".*[\\\/]*({rootNamespaces})\..*";
 
         return exception.GetCallSite2(regExPattern, excludedPaths);
     }
