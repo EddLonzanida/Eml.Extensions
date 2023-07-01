@@ -1,33 +1,46 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Description>Collection of useful Extensions gathered along the way.</Description>
-		<Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
-		<PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<Authors>EmL Solutions</Authors>
-		<Company>EmL Solutions</Company>
-		<PackageTags>EmL Extensions</PackageTags>
-		<NoWarn>1701;1702;1705;CS1591</NoWarn>
-		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <Description>Collection of useful Extensions gathered along the way.</Description>
+        <Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
+        <PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <Authors>EmL Solutions</Authors>
+        <Company>EmL Solutions</Company>
+        <PackageTags>EmL Extensions</PackageTags>
+        <NoWarn>1701;1702;1705;CS1591</NoWarn>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\Eml.Extensions.xml</DocumentationFile>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<Choose>
-		<When Condition=" '$(Configuration)'=='Release' ">
-			<PropertyGroup>
-				<SignAssembly>true</SignAssembly>
-				<DelaySign>false</DelaySign>
-				<AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
-			</PropertyGroup>
-		</When>
-	</Choose>
+    <Choose>
+        <When Condition=" '$(Configuration)'=='Release' ">
+            <PropertyGroup>
+                <SignAssembly>true</SignAssembly>
+                <DelaySign>false</DelaySign>
+                <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
+            </PropertyGroup>
+        </When>
+    </Choose>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	</ItemGroup>
+    <Choose>
+        <When Condition="'$(TargetFramework)' == 'net6.0'">
+            <PropertyGroup>
+                <DefineConstants>NET6</DefineConstants>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(TargetFramework)' == 'net7.0'">
+            <PropertyGroup>
+                <DefineConstants>NET7</DefineConstants>
+            </PropertyGroup>
+        </When>
+    </Choose>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="7.0.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
 
 </Project>
