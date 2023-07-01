@@ -1,6 +1,8 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+#if NET7
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Eml.Extensions;
 
@@ -100,7 +102,11 @@ public static class DateExtensions
         return null;
     }
 
-    public static DateTime? ToDateTime(this string dateAsString, [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)] string format)
+    public static DateTime? ToDateTime(this string dateAsString,
+#if NET7
+        [StringSyntax(StringSyntaxAttribute.DateOnlyFormat)]
+#endif
+        string format)
     {
         if (dateAsString.IsNullOrWhiteSpace())
         {

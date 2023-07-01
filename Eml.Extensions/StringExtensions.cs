@@ -1,10 +1,12 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+#if NET7
+using System.Diagnostics.CodeAnalysis;
+#endif
 
 namespace Eml.Extensions;
 
@@ -64,7 +66,12 @@ public static class StringExtensions
     /// <summary>
     ///     Find and replace using regexPattern.
     /// </summary>
-    public static string FindReplaceUsingRegEx(this string body, [StringSyntax(StringSyntaxAttribute.Regex)] string regexPattern, string value)
+    public static string FindReplaceUsingRegEx(this string body,
+#if NET7
+        [StringSyntax(StringSyntaxAttribute.Regex)]
+#endif
+        string regexPattern,
+        string value)
     {
         var tmpBody = Regex.Replace(body, regexPattern, value);
 
