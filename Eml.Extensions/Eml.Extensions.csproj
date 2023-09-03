@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <PackageProjectUrl>https://github.com/EddLonzanida/Eml.Extensions</PackageProjectUrl>
         <Description>Collection of useful Extensions gathered along the way.</Description>
         <Copyright>Copyright (c) EmL Solutions. All rights reserved.</Copyright>
         <PackageReleaseNotes>Eml Extensions</PackageReleaseNotes>
