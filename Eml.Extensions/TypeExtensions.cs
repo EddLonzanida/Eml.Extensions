@@ -94,6 +94,16 @@ public static class TypeExtensions
             .ToList();
     }
 
+    public static List<string> GetStaticMethodNames(this Type type, Func<MethodInfo, bool> whereClause)
+    {
+        var methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy)
+            .Where(whereClause);
+
+        return methods
+            .Select(r => r.Name)
+            .ToList();
+    }
+
     public static string GetMethodSignature(this MethodInfo mi)
     {
         var param = mi.GetParameters()
